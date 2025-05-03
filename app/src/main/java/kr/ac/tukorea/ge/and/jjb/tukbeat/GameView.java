@@ -2,6 +2,8 @@ package kr.ac.tukorea.ge.and.jjb.tukbeat;
 
 import android.app.Notification;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.view.View;
 import android.util.AttributeSet;
@@ -17,8 +19,8 @@ public class GameView extends View {
     private static final float SCREEN_WIDTH= 16.0f;
     private static final float SCREEN_HEIGHT= 9f;
     private final Matrix transformMatrix = new Matrix();
-    private final RectF borderRect = new RectF(0,0,SCREEN_WIDTH,SCREEN_HEIGHT);
-    private final Paint borderPaint = new Paint();
+    private Bitmap ballBitmap;
+    private final RectF ballRect = new RectF(3.5f,7.0f,5.5f,9.0f);
 
     public GameView(Context context) {
         super(context);
@@ -31,9 +33,7 @@ public class GameView extends View {
     }
 
     private void init() {
-        borderPaint.setStyle(Paint.Style.STROKE);
-        borderPaint.setStrokeWidth(0.1f);
-        borderPaint.setColor(Color.RED);
+        ballBitmap = BitmapFactory.decodeResource(getResources(),R.mipmap.soccer_ball_240);
     }
 
     @Override
@@ -61,9 +61,35 @@ public class GameView extends View {
     {
         super.onDraw(canvas);
         canvas.setMatrix(transformMatrix);
-        canvas.drawRect(borderRect,borderPaint);
+        drawDebugBackground(canvas);
+        canvas.drawBitmap(ballBitmap, null, ballRect, null);
     }
 
+    private RectF borderRect;
+    private Paint borderPaint, gridPaint;
+    private void drawDebugBackground(@NonNull Canvas canvas){
+        if(borderRect == null)
+        {
+            borderRect = new RectF(0,0,SCREEN_WIDTH, SCREEN_HEIGHT);
+
+            borderPaint = new Paint();
+            borderPaint.setStyle(Paint.Style.STROKE);
+            borderPaint.setStrokeWidth(0.1f);
+            borderPaint.setColor(Color.RED);
+
+            gridPaint = new Paint();
+            gridPaint.setStyle(Paint.Style.STROKE);
+            gridPaint.setStrokeWidth(0.01f);
+            gridPaint.setColor(Color.GRAY);
+        }
+        canvas.drawRect(borderRect, borderPaint);
+        for(float x = 1.0f; x< SCREEN_WIDTH; x+= 1.0f){
+            canvas.drawLine(x,0,x,SCREEN_HEIGHT,gridPaint);
+        }
+        for(float y = 1.0f; y < SCREEN_HEIGHT; y+= 1.0f){
+            canvas.drawLine(0,y,SCREEN_WIDTH,y,gridPaint);
+        }
+    }
 
 
 }
