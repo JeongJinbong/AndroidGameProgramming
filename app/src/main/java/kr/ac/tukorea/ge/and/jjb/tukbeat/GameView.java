@@ -1,12 +1,13 @@
 package kr.ac.tukorea.ge.and.jjb.tukbeat;
 
-import android.app.Notification;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.view.View;
 import android.util.AttributeSet;
+import android.util.Log;
+import android.view.MotionEvent;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
@@ -18,6 +19,8 @@ import androidx.annotation.Nullable;
 public class GameView extends View {
     private static final float SCREEN_WIDTH= 16.0f;
     private static final float SCREEN_HEIGHT= 9f;
+
+    private static final String TAG = GameView.class.getSimpleName();
     private final Matrix transformMatrix = new Matrix();
     private Bitmap ballBitmap;
     private final RectF ballRect = new RectF(3.5f,7.0f,5.5f,9.0f);
@@ -63,6 +66,23 @@ public class GameView extends View {
         canvas.setMatrix(transformMatrix);
         drawDebugBackground(canvas);
         canvas.drawBitmap(ballBitmap, null, ballRect, null);
+    }
+
+   private void scheduleUpdate(){
+        postDelayed(new Runnable() {
+            @Override
+            public void run() {
+               update();
+               invalidate();
+               scheduleUpdate();
+            }
+        },500);
+   }
+
+    private  void update()
+    {
+       ballRect.offset(0.1f,0.2f);
+        Log.d(TAG,"Ball Rect = " + ballRect);
     }
 
     private RectF borderRect;
