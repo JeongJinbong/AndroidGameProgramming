@@ -21,4 +21,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "TUKBeat"
 include(":app")
- 
+include("a2dg")
