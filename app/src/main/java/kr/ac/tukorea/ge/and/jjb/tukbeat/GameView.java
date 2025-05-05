@@ -7,23 +7,23 @@ import android.graphics.Canvas;
 import android.view.View;
 import android.util.AttributeSet;
 import android.util.Log;
-import android.view.MotionEvent;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.RectF;
+import android.view.Choreographer;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 public class GameView extends View {
-    private static final float SCREEN_WIDTH= 16.0f;
-    private static final float SCREEN_HEIGHT= 9f;
+    private static final float SCREEN_WIDTH = 16.0f;
+    private static final float SCREEN_HEIGHT = 9f;
 
     private static final String TAG = GameView.class.getSimpleName();
     private final Matrix transformMatrix = new Matrix();
     private Bitmap ballBitmap;
-    private final RectF ballRect = new RectF(3.5f,7.0f,5.5f,9.0f);
+    private final RectF ballRect = new RectF(3.5f, 7.0f, 5.5f, 9.0f);
 
     public GameView(Context context) {
         super(context);
@@ -36,80 +36,82 @@ public class GameView extends View {
     }
 
     private void init() {
-        ballBitmap = BitmapFactory.decodeResource(getResources(),R.mipmap.soccer_ball_240);
+        ballBitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.soccer_ball_240);
+
+        scheduleUpdate();
     }
 
     @Override
-    protected void onSizeChanged(int w, int h, int oldw, int oldh)
-    {
-        super.onSizeChanged(w,h,oldw,oldh);
-        float view_ratio = (float)w/ (float)h;
+    protected void onSizeChanged(int w, int h, int oldw, int oldh) {
+        super.onSizeChanged(w, h, oldw, oldh);
+        float view_ratio = (float) w / (float) h;
         float game_ratio = SCREEN_WIDTH / SCREEN_HEIGHT;
 
         transformMatrix.reset();
         if (view_ratio > game_ratio) {
             float scale = h / SCREEN_HEIGHT;
-            transformMatrix.preTranslate((w - h * game_ratio) / 2, 0 );
+            transformMatrix.preTranslate((w - h * game_ratio) / 2, 0);
             transformMatrix.preScale(scale, scale);
-        }
-        else{
-            float scale = w/ SCREEN_WIDTH;
-            transformMatrix.preTranslate(0,(h-w/game_ratio/2));
+        } else {
+            float scale = w / SCREEN_WIDTH;
+            transformMatrix.preTranslate(0, (h - w / game_ratio / 2));
             transformMatrix.preScale(scale, scale);
         }
     }
 
     @Override
-    protected void onDraw(@NonNull Canvas canvas)
-    {
+    protected void onDraw(@NonNull Canvas canvas) {
         super.onDraw(canvas);
         canvas.setMatrix(transformMatrix);
         drawDebugBackground(canvas);
         canvas.drawBitmap(ballBitmap, null, ballRect, null);
     }
 
-   private void scheduleUpdate(){
-        postDelayed(new Runnable() {
-            @Override
-            public void run() {
-               update();
-               invalidate();
-               scheduleUpdate();
+    private void scheduleUpdate() {
+        Choreographer.getInstance().postFrameCallback(gameLoopCallback);
+    }
+
+    private final Choreographer.FrameCallback gameLoopCallback = new Choreographer.FrameCallback() {
+        @Override
+        public void doFrame(long nanos) {
+            update();
+            invalidate();
+            if (isShown()) {
+                scheduleUpdate();
             }
-        },500);
-   }
+        }
+    };
 
-    private  void update()
-    {
-       ballRect.offset(0.1f,0.2f);
-        Log.d(TAG,"Ball Rect = " + ballRect);
+        private void update() {
+            ballRect.offset(0.01f, 0.02f);
+            Log.d(TAG, "Ball Rect = " + ballRect);
+        }
+
+        private RectF borderRect;
+        private Paint borderPaint, gridPaint;
+
+        private void drawDebugBackground(@NonNull Canvas canvas) {
+            if (borderRect == null) {
+                borderRect = new RectF(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+
+                borderPaint = new Paint();
+                borderPaint.setStyle(Paint.Style.STROKE);
+                borderPaint.setStrokeWidth(0.1f);
+                borderPaint.setColor(Color.RED);
+
+                gridPaint = new Paint();
+                gridPaint.setStyle(Paint.Style.STROKE);
+                gridPaint.setStrokeWidth(0.01f);
+                gridPaint.setColor(Color.GRAY);
+            }
+            canvas.drawRect(borderRect, borderPaint);
+            for (float x = 1.0f; x < SCREEN_WIDTH; x += 1.0f) {
+                canvas.drawLine(x, 0, x, SCREEN_HEIGHT, gridPaint);
+            }
+            for (float y = 1.0f; y < SCREEN_HEIGHT; y += 1.0f) {
+                canvas.drawLine(0, y, SCREEN_WIDTH, y, gridPaint);
+            }
+        }
+
+
     }
-
-    private RectF borderRect;
-    private Paint borderPaint, gridPaint;
-    private void drawDebugBackground(@NonNull Canvas canvas){
-        if(borderRect == null)
-        {
-            borderRect = new RectF(0,0,SCREEN_WIDTH, SCREEN_HEIGHT);
-
-            borderPaint = new Paint();
-            borderPaint.setStyle(Paint.Style.STROKE);
-            borderPaint.setStrokeWidth(0.1f);
-            borderPaint.setColor(Color.RED);
-
-            gridPaint = new Paint();
-            gridPaint.setStyle(Paint.Style.STROKE);
-            gridPaint.setStrokeWidth(0.01f);
-            gridPaint.setColor(Color.GRAY);
-        }
-        canvas.drawRect(borderRect, borderPaint);
-        for(float x = 1.0f; x< SCREEN_WIDTH; x+= 1.0f){
-            canvas.drawLine(x,0,x,SCREEN_HEIGHT,gridPaint);
-        }
-        for(float y = 1.0f; y < SCREEN_HEIGHT; y+= 1.0f){
-            canvas.drawLine(0,y,SCREEN_WIDTH,y,gridPaint);
-        }
-    }
-
-
-}
