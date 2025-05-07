@@ -16,13 +16,5 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
     }
 
-    @Override
-    public boolean onTouchEvent(MotionEvent event)
-    {
-        if(event.getAction() == MotionEvent.ACTION_DOWN){
-            startActivity(new Intent(this, SongSelectionActivity.class));
-        }
-        return super.onTouchEvent(event);
-    }
 
 }

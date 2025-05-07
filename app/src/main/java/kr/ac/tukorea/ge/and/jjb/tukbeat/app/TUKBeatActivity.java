@@ -13,4 +13,6 @@ public class TUKBeatActivity extends GameActivity {
         GameView.drawsDebugStuffs = true;
         super.onCreate(savedInstanceState);
     }
+
+
 }
