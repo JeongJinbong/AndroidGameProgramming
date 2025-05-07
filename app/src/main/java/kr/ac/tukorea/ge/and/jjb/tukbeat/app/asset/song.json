@@ -1,15 +1,13 @@
 [
-{
-"title" : nightfall
-"artist" : ginkiha
-"cover": "album/1.jpg"
-
-"title" : Abiogenesis
-"artist" : Juggernaut
-"cover": "album/2.jpg"
-
-
-
-}
+  {
+    "title": "nightfall",
+    "artist": "ginkiha",
+    "cover": "album/1.jpg"
+  },
+  {
+  "title" : "Abiogenesis",
+  "artist" : "Juggernaut",
+  "cover": "album/2.jpg"
+  }
 
 ]
