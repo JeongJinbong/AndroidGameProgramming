@@ -7,6 +7,7 @@ import android.view.MotionEvent;
 import androidx.appcompat.app.AppCompatActivity;
 
 import kr.ac.tukorea.ge.and.jjb.tukbeat.R;
+import kr.ac.tukorea.ge.and.jjb.tukbeat.app.data.Song;
 
 public class SongSelectionActivity extends AppCompatActivity {
 
@@ -14,6 +15,7 @@ public class SongSelectionActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        Song.load(this,"song.json");
     }
 
     @Override
