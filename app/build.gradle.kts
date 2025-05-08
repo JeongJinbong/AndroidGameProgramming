@@ -47,4 +47,5 @@ dependencies {
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
     implementation("com.fasterxml.jackson.core:jackson-databind:2.9.0")
+    implementation ("androidx.viewpager2:viewpager2:1.0.0")
 }

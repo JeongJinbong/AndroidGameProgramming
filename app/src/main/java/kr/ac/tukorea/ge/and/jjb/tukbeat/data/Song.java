@@ -1,4 +1,4 @@
-package kr.ac.tukorea.ge.and.jjb.tukbeat.app.data;
+package kr.ac.tukorea.ge.and.jjb.tukbeat.data;
 
 import android.content.Context;
 import android.util.JsonReader;

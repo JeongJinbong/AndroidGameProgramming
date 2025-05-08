@@ -2,12 +2,12 @@
   {
     "title": "nightfall",
     "artist": "ginkiha",
-    "cover": "album/1.jpg"
+    "thumbnail": "album/c01.jpg"
   },
   {
   "title" : "Abiogenesis",
   "artist" : "Juggernaut",
-  "cover": "album/2.jpg"
+  "thumbnail": "album/c02.jpg"
   }
 
 ]
