@@ -29,8 +29,10 @@ public class Song {
     private static final String TAG = Song.class.getSimpleName();
     public static ArrayList<Song> songs = new ArrayList<>();
     public static AssetManager assetManager;
-    protected  static Handler handler = new Handler();
+    protected static Handler handler = new Handler();
     private  MediaPlayer mediaPlayer;
+    private Runnable loopRunnable;
+
 
     public static ArrayList<Song> load(Context context, String filename)
     {
@@ -86,26 +88,26 @@ public class Song {
 
     public void playDemo() {
         stop();
-        try{
+        try {
             AssetFileDescriptor afd = assetManager.openFd(media);
             mediaPlayer = new MediaPlayer();
             mediaPlayer.setDataSource(afd.getFileDescriptor(), afd.getStartOffset(), afd.getLength());
             mediaPlayer.prepare();
-            if(demoStart>0)
-            {
-                MediaPlayer mp = mediaPlayer;
-                mp.seekTo(demoStart);
-                handler.postDelayed(() -> {
-                    if (mediaPlayer != null && mediaPlayer.isPlaying()) {
-                        mediaPlayer.stop();
-                        mediaPlayer.release();
-                        mediaPlayer = null;
+            mediaPlayer.seekTo(demoStart);
+            loopRunnable = new Runnable() {
+                @Override
+                public void run() {
+                    if (mediaPlayer != null) {
+                        mediaPlayer.seekTo(demoStart);
+                        mediaPlayer.start();
+                        handler.postDelayed(this, demoEnd - demoStart);
                     }
-                }, demoEnd - demoStart);
-            }
+                }
+            };
             mediaPlayer.start();
-            Log.d(TAG,"Playing" + title + "/" + artist);
-        }catch (IOException e) {
+            handler.postDelayed(loopRunnable, demoEnd - demoStart);
+            Log.d(TAG, "Playing demo in loop: " + title + "/" + artist);
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
@@ -118,6 +120,10 @@ public class Song {
             mediaPlayer.release();
             mediaPlayer = null;
             Log.d(TAG, "Stopping " + title + "/" + artist);
+        }
+        if (handler != null && loopRunnable != null) {
+            handler.removeCallbacks(loopRunnable);
+            loopRunnable = null;
         }
     }
 }
