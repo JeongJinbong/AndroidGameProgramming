@@ -16,6 +16,7 @@ public class Song {
     public String title;
     public String artist;
     public String thumbnail;
+    public String media;
 
     private static final String TAG = Song.class.getSimpleName();
 
@@ -62,6 +63,6 @@ public class Song {
     @NonNull
     @Override
     public String toString(){
-        return "Song:<" + title + "/" + artist + "/" + thumbnail + ">";
+        return "Song:<" + title + "/" + artist + "/" + thumbnail + "/" + media + ">";
     }
 }
