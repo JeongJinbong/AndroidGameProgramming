@@ -54,13 +54,13 @@ public class SongSelectionActivity extends AppCompatActivity {
     }
 
     @Override
-    protected  void onDestroy(){
+    protected void onDestroy(){
         Song.unload();
         super.onDestroy();
     }
 
     @Override
-    protected  void onPause(){
+    protected void onPause(){
         super.onPause();
     }
 }

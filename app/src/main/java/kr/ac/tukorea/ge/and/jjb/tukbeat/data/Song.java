@@ -7,6 +7,8 @@ import android.util.Log;
 import android.content.res.AssetFileDescriptor;
 import android.media.MediaPlayer;
 
+import android.os.Handler;
+
 import androidx.annotation.NonNull;
 
 import java.io.FileDescriptor;
@@ -22,10 +24,12 @@ public class Song {
     public String artist;
     public String thumbnail;
     public String media;
+    public int demoStart, demoEnd;
 
     private static final String TAG = Song.class.getSimpleName();
     public static ArrayList<Song> songs = new ArrayList<>();
     public static AssetManager assetManager;
+    protected  static Handler handler = new Handler();
     private  MediaPlayer mediaPlayer;
 
     public static ArrayList<Song> load(Context context, String filename)
@@ -81,14 +85,25 @@ public class Song {
     }
 
     public void playDemo() {
+        stop();
         try{
             AssetFileDescriptor afd = assetManager.openFd(media);
             mediaPlayer = new MediaPlayer();
             mediaPlayer.setDataSource(afd);
             mediaPlayer.prepare();
+            if(demoStart>0)
+            {
+                MediaPlayer mp = mediaPlayer;
+                mp.seekTo(demoStart);
+                handler.postDelayed(()->{
+                    mp.stop();
+                    if(mp == mediaPlayer){
+                        mediaPlayer = null;
+                    }
+                }, demoEnd - demoStart);
+            }
             mediaPlayer.start();
             Log.d(TAG,"Playing" + title + "/" + artist);
-
         }catch (IOException e) {
             e.printStackTrace();
         }
@@ -97,7 +112,7 @@ public class Song {
     public void stop() {
         if(mediaPlayer != null)
         {
-            Log.d(TAG, "Stopping" + title + "/" artist);
+            Log.d(TAG, "Stopping" + title + "/" + artist);
             mediaPlayer.stop();
             mediaPlayer = null;
         }
