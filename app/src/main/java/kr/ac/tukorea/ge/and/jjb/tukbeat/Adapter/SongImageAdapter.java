@@ -6,9 +6,6 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.LinearInterpolator;
-import android.view.animation.RotateAnimation;
 import android.widget.ImageView;
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -53,16 +50,6 @@ public class SongImageAdapter extends RecyclerView.Adapter<SongImageAdapter.Imag
             InputStream is = context.getAssets().open(fileName);
             Bitmap bitmap = BitmapFactory.decodeStream(is);
             holder.imageView.setImageBitmap(bitmap);
-            RotateAnimation rotate = new RotateAnimation(
-                    0f, 360f,
-                    Animation.RELATIVE_TO_SELF, 0.5f,
-                    Animation.RELATIVE_TO_SELF, 0.5f
-            );
-            rotate.setDuration(10000); // 10초에 1바퀴
-            rotate.setRepeatCount(Animation.INFINITE);
-            rotate.setInterpolator(new LinearInterpolator());
-
-            holder.imageView.startAnimation(rotate);
             is.close();
         } catch (IOException e) {
             e.printStackTrace();
