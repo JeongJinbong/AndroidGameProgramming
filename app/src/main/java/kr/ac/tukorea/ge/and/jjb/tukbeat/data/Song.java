@@ -1,10 +1,15 @@
 package kr.ac.tukorea.ge.and.jjb.tukbeat.data;
 
 import android.content.Context;
+import android.content.res.AssetManager;
 import android.util.JsonReader;
 import android.util.Log;
+import android.content.res.AssetFileDescriptor;
+import android.media.MediaPlayer;
 
 import androidx.annotation.NonNull;
+
+import java.io.FileDescriptor;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -19,12 +24,16 @@ public class Song {
     public String media;
 
     private static final String TAG = Song.class.getSimpleName();
+    public static ArrayList<Song> songs = new ArrayList<>();
+    public static AssetManager assetManager;
+    private  MediaPlayer mediaPlayer;
 
     public static ArrayList<Song> load(Context context, String filename)
     {
-        ArrayList<Song> songs = new ArrayList<>();
+        songs = new ArrayList<>();
         try{
-            InputStream is = context.getAssets().open(filename);
+            assetManager = context.getAssets();
+            InputStream is = assetManager.open(filename);
             JsonReader jr = new JsonReader(new InputStreamReader(is));
             jr.beginArray();
             while(jr.hasNext()){
@@ -60,9 +69,37 @@ public class Song {
         return song;
     }
 
+    public static void unload() {
+        songs.clear();
+        assetManager = null;
+    }
+
     @NonNull
     @Override
     public String toString(){
         return "Song:<" + title + "/" + artist + "/" + thumbnail + "/" + media + ">";
+    }
+
+    public void playDemo() {
+        try{
+            AssetFileDescriptor afd = assetManager.openFd(media);
+            mediaPlayer = new MediaPlayer();
+            mediaPlayer.setDataSource(afd);
+            mediaPlayer.prepare();
+            mediaPlayer.start();
+            Log.d(TAG,"Playing" + title + "/" + artist);
+
+        }catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void stop() {
+        if(mediaPlayer != null)
+        {
+            Log.d(TAG, "Stopping" + title + "/" artist);
+            mediaPlayer.stop();
+            mediaPlayer = null;
+        }
     }
 }

@@ -50,5 +50,17 @@ public class SongSelectionActivity extends AppCompatActivity {
         Song song = songs.get(position);
         textTitle.setText(song.title);
         textArtist.setText(song.artist);
+        song.playDemo();
+    }
+
+    @Override
+    protected  void onDestroy(){
+        Song.unload();
+        super.onDestroy();
+    }
+
+    @Override
+    protected  void onPause(){
+        super.onPause();
     }
 }
