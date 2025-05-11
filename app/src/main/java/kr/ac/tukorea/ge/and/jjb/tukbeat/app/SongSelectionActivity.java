@@ -2,8 +2,9 @@ package kr.ac.tukorea.ge.and.jjb.tukbeat.app;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MotionEvent;
-import android.view.View;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager2.widget.ViewPager2;
@@ -11,24 +12,30 @@ import androidx.viewpager2.widget.ViewPager2;
 import java.util.ArrayList;
 
 import kr.ac.tukorea.ge.and.jjb.tukbeat.R;
-import kr.ac.tukorea.ge.and.jjb.tukbeat.Adapter.SongAdapter;
 import kr.ac.tukorea.ge.and.jjb.tukbeat.data.Song;
 
 
 public class SongSelectionActivity extends AppCompatActivity {
 
-    private ViewPager2 viewpager2;
+    private static final String TAG = "SongSelectionActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.selection_activity_main);
-        viewpager2 = findViewById(R.id.viewPager2);
 
-        ArrayList<Song> songs = Song.load(this,"song.json");
-        SongAdapter adapter = new SongAdapter(this, songs);
-        viewpager2.setAdapter(adapter);
+        // 곡 데이터 로딩
+        ArrayList<Song> songs = Song.load(this, "song.json");
 
+        // 로드된 곡 정보 로그로 확인
+        for (Song song : songs) {
+            Log.d(TAG, "Loaded song: " + song.toString());
+        }
+
+        // 단순 TextView에 첫 번째 곡 정보 출력해보기
+        TextView textView = new TextView(this);
+        textView.setText(songs.isEmpty() ? "곡 없음" : songs.get(0).toString());
+        textView.setTextSize(18);
+        setContentView(textView);
     }
 
     @Override
