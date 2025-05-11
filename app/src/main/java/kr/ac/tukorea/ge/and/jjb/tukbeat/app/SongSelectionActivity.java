@@ -18,6 +18,7 @@ public class SongSelectionActivity extends AppCompatActivity {
     private ViewPager2 viewPager2;
     private TextView textTitle, textArtist;
     private ArrayList<Song> songs;
+    private Song currentSong;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,7 +48,11 @@ public class SongSelectionActivity extends AppCompatActivity {
     }
 
     private void updateInfo(int position) {
+        if (currentSong != null) {
+            currentSong.stop(); 
+        }
         Song song = songs.get(position);
+        currentSong = song;
         textTitle.setText(song.title);
         textArtist.setText(song.artist);
         song.playDemo();
@@ -55,12 +60,14 @@ public class SongSelectionActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy(){
+        currentSong.stop();
         Song.unload();
         super.onDestroy();
     }
 
     @Override
     protected void onPause(){
+        currentSong.stop();
         super.onPause();
     }
 }

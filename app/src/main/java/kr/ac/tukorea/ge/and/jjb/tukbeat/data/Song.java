@@ -89,15 +89,16 @@ public class Song {
         try{
             AssetFileDescriptor afd = assetManager.openFd(media);
             mediaPlayer = new MediaPlayer();
-            mediaPlayer.setDataSource(afd);
+            mediaPlayer.setDataSource(afd.getFileDescriptor(), afd.getStartOffset(), afd.getLength());
             mediaPlayer.prepare();
             if(demoStart>0)
             {
                 MediaPlayer mp = mediaPlayer;
                 mp.seekTo(demoStart);
-                handler.postDelayed(()->{
-                    mp.stop();
-                    if(mp == mediaPlayer){
+                handler.postDelayed(() -> {
+                    if (mediaPlayer != null && mediaPlayer.isPlaying()) {
+                        mediaPlayer.stop();
+                        mediaPlayer.release();
                         mediaPlayer = null;
                     }
                 }, demoEnd - demoStart);
@@ -110,11 +111,13 @@ public class Song {
     }
 
     public void stop() {
-        if(mediaPlayer != null)
-        {
-            Log.d(TAG, "Stopping" + title + "/" + artist);
-            mediaPlayer.stop();
+        if (mediaPlayer != null) {
+            if (mediaPlayer.isPlaying()) {
+                mediaPlayer.stop();
+            }
+            mediaPlayer.release();
             mediaPlayer = null;
+            Log.d(TAG, "Stopping " + title + "/" + artist);
         }
     }
 }
