@@ -51,6 +51,11 @@ public class Sprite implements IGameObject {
         return width;
     }
 
+    public void setBitmap(Bitmap bitmap)
+    {
+        this.bitmap = bitmap;
+    }
+
     public float getHeight() {
         return height;
     }

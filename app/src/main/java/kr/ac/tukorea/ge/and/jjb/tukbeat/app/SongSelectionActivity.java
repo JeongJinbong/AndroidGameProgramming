@@ -1,6 +1,8 @@
 package kr.ac.tukorea.ge.and.jjb.tukbeat.app;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -42,6 +44,7 @@ public class SongSelectionActivity extends AppCompatActivity {
             @Override
             public void onPageSelected(int position) {
                 super.onPageSelected(position);
+                currentSong = songs.get(position);
                 updateInfo(position);
             }
         });
@@ -69,5 +72,12 @@ public class SongSelectionActivity extends AppCompatActivity {
     protected void onPause(){
         currentSong.stop();
         super.onPause();
+    }
+
+
+    public void onBtnStart(View view) {
+        Intent intent = new Intent(this, TUKBeatActivity.class);
+        intent.putExtra("song", currentSong);
+        startActivity(intent);
     }
 }

@@ -10,9 +10,6 @@ import android.media.MediaPlayer;
 import android.os.Handler;
 
 import androidx.annotation.NonNull;
-
-import java.io.FileDescriptor;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
