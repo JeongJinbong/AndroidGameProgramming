@@ -2,6 +2,7 @@ package kr.ac.tukorea.ge.and.jjb.tukbeat.data;
 
 import android.content.Context;
 import android.content.res.AssetManager;
+import android.os.Looper;
 import android.util.JsonReader;
 import android.util.Log;
 import android.content.res.AssetFileDescriptor;
@@ -26,7 +27,7 @@ public class Song {
     private static final String TAG = Song.class.getSimpleName();
     public static ArrayList<Song> songs = new ArrayList<>();
     public static AssetManager assetManager;
-    protected static Handler handler = new Handler();
+    protected static Handler handler = new Handler(Looper.getMainLooper());
     private  MediaPlayer mediaPlayer;
     private Runnable loopRunnable;
 
@@ -85,12 +86,14 @@ public class Song {
 
     public void playDemo() {
         stop();
+
         try {
             AssetFileDescriptor afd = assetManager.openFd(media);
             mediaPlayer = new MediaPlayer();
             mediaPlayer.setDataSource(afd.getFileDescriptor(), afd.getStartOffset(), afd.getLength());
             mediaPlayer.prepare();
             mediaPlayer.seekTo(demoStart);
+
             loopRunnable = new Runnable() {
                 @Override
                 public void run() {
@@ -101,9 +104,11 @@ public class Song {
                     }
                 }
             };
+
             mediaPlayer.start();
             handler.postDelayed(loopRunnable, demoEnd - demoStart);
             Log.d(TAG, "Playing demo in loop: " + title + "/" + artist);
+
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -123,4 +128,9 @@ public class Song {
             loopRunnable = null;
         }
     }
+
+    public static Song get(int index) {
+        return songs.get(index);
+    }
+
 }

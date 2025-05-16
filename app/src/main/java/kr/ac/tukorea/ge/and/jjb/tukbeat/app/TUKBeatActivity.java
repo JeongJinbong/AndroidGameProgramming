@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.util.Log;
 
 import kr.ac.tukorea.ge.and.jjb.tukbeat.BuildConfig;
-import kr.ac.tukorea.ge.and.jjb.tukbeat.data.Song;
 import kr.ac.tukorea.ge.and.jjb.tukbeat.game.scene.MainScene;
 import kr.ac.tukorea.ge.spgp2025.a2dg.framework.activity.GameActivity;
 import kr.ac.tukorea.ge.spgp2025.a2dg.framework.view.GameView;
@@ -12,7 +11,9 @@ import kr.ac.tukorea.ge.spgp2025.a2dg.framework.view.Metrics;
 
 public class TUKBeatActivity extends GameActivity {
 
-    public static Song selectedSong;
+    public static final String SONG_INDEX = "songIndex";
+    private static final String TAG = TUKBeatActivity.class.getSimpleName();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,8 +23,8 @@ public class TUKBeatActivity extends GameActivity {
 
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
-            selectedSong = (Song) extras.getSerializable("song");
-            Log.d("TUKBeat", "선택된 곡: " + selectedSong.title);
+            int index = extras.getInt(SONG_INDEX);
+            Log.d(TAG, "Selected Song Index = " + index);
         }
         new MainScene().push();
 

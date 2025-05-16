@@ -14,9 +14,8 @@ import kr.ac.tukorea.ge.and.jjb.tukbeat.Adapter.SongImageAdapter;
 import kr.ac.tukorea.ge.and.jjb.tukbeat.R;
 import kr.ac.tukorea.ge.and.jjb.tukbeat.data.Song;
 
-
 public class SongSelectionActivity extends AppCompatActivity {
-
+    private int currentSongIndex = 0;
     private ViewPager2 viewPager2;
     private TextView textTitle, textArtist;
     private ArrayList<Song> songs;
@@ -32,7 +31,6 @@ public class SongSelectionActivity extends AppCompatActivity {
         textArtist = findViewById(R.id.textArtist);
 
         songs = Song.load(this, "song.json");
-
         SongImageAdapter adapter = new SongImageAdapter(this, songs);
         viewPager2.setAdapter(adapter);
 
@@ -43,41 +41,45 @@ public class SongSelectionActivity extends AppCompatActivity {
         viewPager2.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
             @Override
             public void onPageSelected(int position) {
-                super.onPageSelected(position);
-                currentSong = songs.get(position);
+                if (currentSong != null) {
+                    currentSong.stop();
+                }
                 updateInfo(position);
             }
         });
     }
 
     private void updateInfo(int position) {
-        if (currentSong != null) {
-            currentSong.stop(); 
-        }
-        Song song = songs.get(position);
-        currentSong = song;
-        textTitle.setText(song.title);
-        textArtist.setText(song.artist);
-        song.playDemo();
+        currentSongIndex = position;
+        currentSong = songs.get(position);
+        textTitle.setText(currentSong.title);
+        textArtist.setText(currentSong.artist);
+        currentSong.playDemo();
     }
 
     @Override
-    protected void onDestroy(){
-        currentSong.stop();
+    protected void onDestroy() {
+        if (currentSong != null) {
+            currentSong.stop();
+        }
         Song.unload();
         super.onDestroy();
     }
 
     @Override
-    protected void onPause(){
-        currentSong.stop();
+    protected void onPause() {
+        if (currentSong != null) {
+            currentSong.stop();
+        }
         super.onPause();
     }
 
-
     public void onBtnStart(View view) {
+        if (currentSong != null) {
+            currentSong.stop();
+        }
         Intent intent = new Intent(this, TUKBeatActivity.class);
-        intent.putExtra("song", currentSong);
+        intent.putExtra(TUKBeatActivity.SONG_INDEX, currentSongIndex);
         startActivity(intent);
     }
 }
