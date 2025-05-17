@@ -1,25 +1,25 @@
 package kr.ac.tukorea.ge.and.jjb.tukbeat.game.scene;
 
 import android.os.Bundle;
+import android.util.Log;
 
 import kr.ac.tukorea.ge.and.jjb.tukbeat.R;
 import kr.ac.tukorea.ge.and.jjb.tukbeat.data.Song;
 import kr.ac.tukorea.ge.spgp2025.a2dg.framework.activity.GameActivity;
-import kr.ac.tukorea.ge.spgp2025.a2dg.framework.objects.VertScrollBackground;
 import kr.ac.tukorea.ge.spgp2025.a2dg.framework.scene.Scene;
 import kr.ac.tukorea.ge.spgp2025.a2dg.framework.objects.Sprite;
 import kr.ac.tukorea.ge.and.jjb.tukbeat.app.TUKBeatActivity;
 import kr.ac.tukorea.ge.spgp2025.a2dg.framework.view.Metrics;
 
-public class MainScene extends Scene{
+public class MainScene extends Scene {
     private final Song song;
 
-    public enum Layer{
+    public enum Layer {
         bg;
         public static final int COUNT = values().length;
     }
-    public MainScene()
-    {
+
+    public MainScene() {
         initLayers(Layer.COUNT);
         int songIndex = 0;
         Bundle extras = GameActivity.activity.getIntent().getExtras();
@@ -36,16 +36,27 @@ public class MainScene extends Scene{
     }
 
     @Override
-public void onEnter()
-    {
+    public void onEnter() {
         super.onEnter();
         song.play();
     }
 
-    public void onExit()
-    {
+    @Override
+    public void onExit() {
         song.stop();
         super.onExit();
+    }
+
+    @Override
+    public void onPause() {
+        song.pause();
+        super.onPause();
+    }
+
+    @Override
+    public void onResume() {
+        song.resume();
+        super.onResume();
     }
 
 }

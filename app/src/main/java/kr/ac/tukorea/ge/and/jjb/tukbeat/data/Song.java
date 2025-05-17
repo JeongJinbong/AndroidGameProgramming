@@ -150,6 +150,18 @@ public class Song {
         }
     }
 
+    public void pause() {
+        if (mediaPlayer == null)
+            return;
+        mediaPlayer.pause();
+    }
+
+    public void resume() {
+        if (mediaPlayer == null)
+            return;
+        mediaPlayer.start();
+    }
+
     public static Song get(int index) {
         return songs.get(index);
     }
