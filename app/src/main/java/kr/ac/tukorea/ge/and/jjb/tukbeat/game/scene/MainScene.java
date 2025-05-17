@@ -12,6 +12,8 @@ import kr.ac.tukorea.ge.and.jjb.tukbeat.app.TUKBeatActivity;
 import kr.ac.tukorea.ge.spgp2025.a2dg.framework.view.Metrics;
 
 public class MainScene extends Scene{
+    private final Song song;
+
     public enum Layer{
         bg;
         public static final int COUNT = values().length;
@@ -24,14 +26,26 @@ public class MainScene extends Scene{
         if (extras != null) {
             songIndex = extras.getInt(TUKBeatActivity.SONG_INDEX, 0);
         }
-        Song song = Song.get(songIndex);
+        song = Song.get(songIndex);
+
 
         Sprite bg = new Sprite(R.mipmap.bg);
         bg.setPosition(Metrics.width / 2, Metrics.height / 2, Metrics.width, Metrics.height);
 
         add(Layer.bg, bg);
+    }
 
+    @Override
+public void onEnter()
+    {
+        super.onEnter();
+        song.play();
+    }
 
+    public void onExit()
+    {
+        song.stop();
+        super.onExit();
     }
 
 }

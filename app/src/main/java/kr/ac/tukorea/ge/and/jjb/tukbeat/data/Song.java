@@ -1,16 +1,17 @@
 package kr.ac.tukorea.ge.and.jjb.tukbeat.data;
 
 import android.content.Context;
+import android.content.res.AssetFileDescriptor;
 import android.content.res.AssetManager;
+import android.media.MediaPlayer;
+import android.os.Handler;
 import android.os.Looper;
 import android.util.JsonReader;
 import android.util.Log;
-import android.content.res.AssetFileDescriptor;
-import android.media.MediaPlayer;
-
-import android.os.Handler;
 
 import androidx.annotation.NonNull;
+
+import java.io.FileDescriptor;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -28,46 +29,42 @@ public class Song {
     public static ArrayList<Song> songs = new ArrayList<>();
     public static AssetManager assetManager;
     protected static Handler handler = new Handler(Looper.getMainLooper());
-    private  MediaPlayer mediaPlayer;
-    private Runnable loopRunnable;
+    private MediaPlayer mediaPlayer;
 
-
-    public static ArrayList<Song> load(Context context, String filename)
-    {
+    public static ArrayList<Song> load(Context context, String filename) {
         songs = new ArrayList<>();
-        try{
+        try {
             assetManager = context.getAssets();
             InputStream is = assetManager.open(filename);
             JsonReader jr = new JsonReader(new InputStreamReader(is));
             jr.beginArray();
-            while(jr.hasNext()){
+            while (jr.hasNext()) {
                 Song song = loadSong(jr);
-                if(song != null){
+                if (song != null) {
                     songs.add(song);
-                    Log.d(TAG,"Songs count =" + songs.size() + " " + song);
+                    Log.d(TAG, "Songs count =" + songs.size() + " " + song);
                 }
             }
             jr.endArray();
             jr.close();
-        }catch (IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
         return songs;
-
     }
 
     private static Song loadSong(JsonReader jr) {
         Song song = new Song();
-        try{
+        try {
             jr.beginObject();
-            while(jr.hasNext()) {
+            while (jr.hasNext()) {
                 String name = jr.nextName();
                 if (!JsonHelper.readProperty(song, name, jr)) {
                     jr.skipValue();
                 }
             }
             jr.endObject();
-        }catch (IOException e){
+        } catch (IOException e) {
             return null;
         }
         return song;
@@ -80,8 +77,31 @@ public class Song {
 
     @NonNull
     @Override
-    public String toString(){
+    public String toString() {
         return "Song:<" + title + "/" + artist + "/" + thumbnail + "/" + media + ">";
+    }
+
+    public void play() {
+        stop();
+        try {
+            AssetFileDescriptor afd = assetManager.openFd(media);
+            FileDescriptor fd = afd.getFileDescriptor();
+            mediaPlayer = new MediaPlayer();
+            mediaPlayer.setDataSource(fd, afd.getStartOffset(), afd.getLength());
+            mediaPlayer.prepare();
+
+            mediaPlayer.setOnErrorListener((mp, what, extra) -> {
+                Log.e(TAG, "MediaPlayer error: what=" + what + ", extra=" + extra);
+                return true;
+            });
+
+            mediaPlayer.setOnCompletionListener(mp -> stop());
+
+            mediaPlayer.start();
+            Log.d(TAG, "Play: " + this);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public void playDemo() {
@@ -93,19 +113,24 @@ public class Song {
             mediaPlayer.prepare();
             mediaPlayer.seekTo(demoStart);
 
-            loopRunnable = new Runnable() {
-                @Override
-                public void run() {
-                    if (mediaPlayer != null) {
-                        mediaPlayer.seekTo(demoStart);
-                        mediaPlayer.start();
-                        handler.postDelayed(this, demoEnd - demoStart);
+            mediaPlayer.setOnErrorListener((mp, what, extra) -> {
+                Log.e(TAG, "MediaPlayer error in demo: what=" + what + ", extra=" + extra);
+                return true;
+            });
+
+            mediaPlayer.setOnCompletionListener(mp -> {
+                if (mediaPlayer != null) {
+                    try {
+                        if (mediaPlayer.getCurrentPosition() >= demoEnd) {
+                            mediaPlayer.seekTo(demoStart);
+                            mediaPlayer.start();
+                        }
+                    } catch (IllegalStateException e) {
                     }
                 }
-            };
+            });
 
             mediaPlayer.start();
-            handler.postDelayed(loopRunnable, demoEnd - demoStart);
             Log.d(TAG, "Playing demo in loop: " + title + "/" + artist);
 
         } catch (IOException e) {
@@ -115,21 +140,17 @@ public class Song {
 
     public void stop() {
         if (mediaPlayer != null) {
-            if (mediaPlayer.isPlaying()) {
+            try {
                 mediaPlayer.stop();
-                mediaPlayer.release();
-                mediaPlayer = null;
-                Log.d(TAG, "Stopping " + title + "/" + artist);
+            } catch (IllegalStateException e) {
             }
-        }
-        if (handler != null && loopRunnable != null) {
-            handler.removeCallbacks(loopRunnable);
-            loopRunnable = null;
+            mediaPlayer.release();
+            mediaPlayer = null;
+            Log.d(TAG, "Stopped " + title + "/" + artist);
         }
     }
 
     public static Song get(int index) {
         return songs.get(index);
     }
-
 }
