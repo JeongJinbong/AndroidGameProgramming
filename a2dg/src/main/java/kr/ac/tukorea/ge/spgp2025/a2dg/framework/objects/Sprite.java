@@ -27,6 +27,10 @@ public class Sprite implements IGameObject {
         }
         Log.v(TAG, "Created " + this.getClass().getSimpleName() + "@" + System.identityHashCode(this));
     }
+    public Sprite(int mipmapId, float x, float y, float width, float height) {
+        this(mipmapId);
+        setPosition(x, y, width, height);
+    }
 
     public void setImageResourceId(int mipmapId) {
         bitmap = BitmapPool.get(mipmapId);
@@ -51,13 +55,11 @@ public class Sprite implements IGameObject {
         return width;
     }
 
-    public void setBitmap(Bitmap bitmap)
-    {
-        this.bitmap = bitmap;
-    }
-
     public float getHeight() {
         return height;
+    }
+    public float getPropotionalHeight(float width) {
+        return width / bitmap.getWidth() * bitmap.getHeight();
     }
     @Override
     public void update() {
@@ -79,4 +81,7 @@ public class Sprite implements IGameObject {
         return getClass().getSimpleName() + "@" + System.identityHashCode(this) + "(" + (int)width + "x" + (int)height + ")";
     }
 
+    public void setBitmap(Bitmap bitmap) {
+        this.bitmap =bitmap;
+    }
 }

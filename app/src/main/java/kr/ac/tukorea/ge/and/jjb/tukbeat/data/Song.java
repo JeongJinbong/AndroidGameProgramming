@@ -86,7 +86,6 @@ public class Song {
 
     public void playDemo() {
         stop();
-
         try {
             AssetFileDescriptor afd = assetManager.openFd(media);
             mediaPlayer = new MediaPlayer();
@@ -118,10 +117,10 @@ public class Song {
         if (mediaPlayer != null) {
             if (mediaPlayer.isPlaying()) {
                 mediaPlayer.stop();
+                mediaPlayer.release();
+                mediaPlayer = null;
+                Log.d(TAG, "Stopping " + title + "/" + artist);
             }
-            mediaPlayer.release();
-            mediaPlayer = null;
-            Log.d(TAG, "Stopping " + title + "/" + artist);
         }
         if (handler != null && loopRunnable != null) {
             handler.removeCallbacks(loopRunnable);
