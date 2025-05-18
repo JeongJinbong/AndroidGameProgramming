@@ -32,6 +32,9 @@ public class Song {
     protected static Handler handler = new Handler(Looper.getMainLooper());
     private MediaPlayer mediaPlayer;
 
+    protected  ArrayList<Object> notes;
+    private float noteLength;
+
     public static ArrayList<Song> load(Context context, String filename) {
         songs = new ArrayList<>();
         try {
@@ -71,6 +74,35 @@ public class Song {
         return song;
     }
 
+    public void loadNotes() {
+        if (notes != null && !notes.isEmpty()) return;
+
+        notes = new ArrayList<>();
+        if (note == null) return;
+
+        float length = 0;
+        try {
+            InputStream is = assetManager.open(note);
+            JsonReader jr = new JsonReader(new InputStreamReader(is));
+            jr.beginArray();
+            while (jr.hasNext()) {
+                Note note = Note.parse(jr);
+                if (note == null) continue;
+                notes.add(note);
+                if (length < note.time) {
+                    length = note.time;
+                }
+            }
+            jr.endArray();
+            is.close();
+            this.noteLength = length;
+            Log.d(TAG, "Song loaded: " + notes.size() + " notes, " + noteLength + " ms.");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
     public static void unload() {
         songs.clear();
         assetManager = null;
@@ -83,6 +115,7 @@ public class Song {
     }
 
     public void play() {
+        loadNotes();
         stop();
         try {
             AssetFileDescriptor afd = assetManager.openFd(media);
