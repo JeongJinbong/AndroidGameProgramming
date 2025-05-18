@@ -1,0 +1,21 @@
+[
+  {
+    "type": "TAP",
+    "time": 1000,
+    "startX": 0.5,
+    "startY": -0.2,
+    "endX": 0.5,
+    "endY": 0.9
+  },
+  {
+    "type": "HOLD",
+    "time": 1500,
+    "duration": 800,
+    "startX": 0.2,
+    "startY": -0.3,
+    "endX": 0.3,
+    "endY": 0.9
+  },
+
+
+]

@@ -23,6 +23,7 @@ public class Song {
     public String artist;
     public String thumbnail;
     public String media;
+    public String note;
     public int demoStart, demoEnd;
 
     private static final String TAG = Song.class.getSimpleName();
@@ -78,7 +79,7 @@ public class Song {
     @NonNull
     @Override
     public String toString() {
-        return "Song:<" + title + "/" + artist + "/" + thumbnail + "/" + media + ">";
+        return "Song:<" + title + "/" + artist + "/" + thumbnail + "/" + media + "/" + note + ">";
     }
 
     public void play() {

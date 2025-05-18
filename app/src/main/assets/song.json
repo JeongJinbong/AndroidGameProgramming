@@ -5,7 +5,8 @@
     "thumbnail": "album/c01.jpg",
     "media": "mp3/c01.mp3",
     "demoStart": "42000",
-    "demoEnd": "68000"
+    "demoEnd": "68000",
+    "note" : "note/nightfall.json"
   },
   {
   "title" : "Abiogenesis",
@@ -13,8 +14,8 @@
   "thumbnail": "album/c02.jpg",
   "media": "mp3/c02.mp3",
   "demoStart": "32000",
-  "demoEnd": "61000"
-
+  "demoEnd": "61000",
+  "note" : "note/Abiogenesis.json"
   }
 
 ]
