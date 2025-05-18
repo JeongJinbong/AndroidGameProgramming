@@ -13,7 +13,7 @@ import kr.ac.tukorea.ge.spgp2025.a2dg.framework.view.Metrics;
 
 public class MainScene extends Scene {
     private final Song song;
-
+    float w = Metrics.width, h= Metrics.height;
     public enum Layer {
         bg;
         public static final int COUNT = values().length;
@@ -28,11 +28,9 @@ public class MainScene extends Scene {
         }
         song = Song.get(songIndex);
 
+        add(Layer.bg, new Sprite(R.mipmap.bg,w/2,h/2,w,h));
+        add(Layer.bg, new Sprite(R.mipmap.judgeline,w/2,h-(50f/2f)-150f,w,50f));
 
-        Sprite bg = new Sprite(R.mipmap.bg);
-        bg.setPosition(Metrics.width / 2, Metrics.height / 2, Metrics.width, Metrics.height);
-
-        add(Layer.bg, bg);
     }
 
     @Override
