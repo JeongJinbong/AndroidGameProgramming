@@ -14,6 +14,8 @@ public class NoteSprite extends Sprite implements IRecyclable {
     protected Note note;
     private static final float WIDTH = 200f;
     private static final float HEIGHT = 100f;
+    private static final float SPEED = 450.0f;
+
 
     private static final float LINE_Y = Metrics.height-(50f/2f)-150f;
 
@@ -27,6 +29,10 @@ public class NoteSprite extends Sprite implements IRecyclable {
 
     public NoteSprite() {
         super(R.mipmap.black_note);
+    }
+
+    public static float screenfulTime() {
+        return Metrics.height / SPEED;
     }
 
     private void init(Note note) {
@@ -44,8 +50,7 @@ public class NoteSprite extends Sprite implements IRecyclable {
     public void update() {
         float musicTime = MainScene.scene.getMusicTime()-2.5f;
         float timeDiff = note.time - musicTime;
-        float speed = 450.0f;
-        float y = LINE_Y - timeDiff * speed;
+            float y = LINE_Y - timeDiff * SPEED;
 
         if(y> Metrics.height + HEIGHT) {
             MainScene.scene.remove(MainScene.Layer.note, this);

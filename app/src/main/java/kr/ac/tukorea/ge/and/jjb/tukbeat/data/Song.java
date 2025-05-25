@@ -17,6 +17,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 
+import kr.ac.tukorea.ge.and.jjb.tukbeat.game.scene.NoteSprite;
+
 public class Song {
 
     public String title;
@@ -207,7 +209,7 @@ public class Song {
     {
         if(noteIndex >= notes.size()) return null;
         Note note = notes.get(noteIndex);
-        if(note.time-5 > MusicTime) return null;
+        if(note.time-NoteSprite.screenfulTime() > MusicTime) return null;
         Log.d(TAG,"Popping nodeIndex=" + noteIndex);
         noteIndex++;
         return note;
