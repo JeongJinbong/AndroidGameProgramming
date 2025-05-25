@@ -32,7 +32,7 @@ public class Song {
     protected static Handler handler = new Handler(Looper.getMainLooper());
     private MediaPlayer mediaPlayer;
 
-    protected  ArrayList<Object> notes;
+    public  ArrayList<Note> notes;
     private float noteLength;
 
     public static ArrayList<Song> load(Context context, String filename) {
