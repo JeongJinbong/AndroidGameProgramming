@@ -1,5 +1,7 @@
 package kr.ac.tukorea.ge.and.jjb.tukbeat.game.scene;
 
+import android.util.Log;
+
 import kr.ac.tukorea.ge.and.jjb.tukbeat.R;
 import kr.ac.tukorea.ge.and.jjb.tukbeat.data.Note;
 import kr.ac.tukorea.ge.spgp2025.a2dg.framework.objects.Sprite;
@@ -11,6 +13,8 @@ public class NoteSprite extends Sprite implements IRecyclable {
     protected Note note;
     private static final float WIDTH = 200f;
     private static final float HEIGHT = 100f;
+
+    private static final float LINE_Y = 1600f-(50f/2f)-150f;
 
     public static NoteSprite get(Note note) {
         NoteSprite ns = Scene.top().getRecyclable(NoteSprite.class);
@@ -36,8 +40,12 @@ public class NoteSprite extends Sprite implements IRecyclable {
     }
     @Override
     public void update() {
-        y += 50.0f * GameView.frameTime;
-        setPosition(x, y, WIDTH, HEIGHT);
+        float musicTime = MainScene.scene.getMusicTime()-2.5f;
+        float timeDiff = note.time - musicTime;
+        float speed = 450.0f;
+        float y = LINE_Y - timeDiff * speed;
+        setPosition(note.startX, y, WIDTH, HEIGHT);
+
     }
 
 }

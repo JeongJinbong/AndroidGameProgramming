@@ -1,12 +1,12 @@
 [
   {
     "type": "TAP",
-    "time": 200,
+    "time": 3.2,
     "startX": 0
   },
   {
   "type": "TAP",
-  "time": 200,
+  "time": 3.2,
   "startX": 200
 }
 ]
