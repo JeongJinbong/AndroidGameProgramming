@@ -47,9 +47,6 @@ public class MainScene extends Scene {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                for (Note note : song.notes) {
-                    add(Layer.note, NoteSprite.get(note));
-                }
                 song.play();
             }
         }, 2500);
@@ -83,5 +80,9 @@ public class MainScene extends Scene {
         super.update();
         float deltaTime = GameView.frameTime;
         musicTime += deltaTime;
+
+        Note note = song.popNoteBefore(musicTime);
+        if(note == null) return;
+        add(Layer.note, NoteSprite.get(note));
     }
 }

@@ -32,6 +32,8 @@ public class Song {
     protected static Handler handler = new Handler(Looper.getMainLooper());
     private MediaPlayer mediaPlayer;
 
+    protected int noteIndex;
+
     public  ArrayList<Note> notes;
     private float noteLength;
 
@@ -116,6 +118,7 @@ public class Song {
 
     public void play() {
         loadNotes();
+        noteIndex=0;
         stop();
         try {
             AssetFileDescriptor afd = assetManager.openFd(media);
@@ -198,5 +201,15 @@ public class Song {
 
     public static Song get(int index) {
         return songs.get(index);
+    }
+
+    public Note popNoteBefore(float MusicTime)
+    {
+        if(noteIndex >= notes.size()) return null;
+        Note note = notes.get(noteIndex);
+        if(note.time > MusicTime) return null;
+        Log.d(TAG,"Popping nodeIndex=" + noteIndex);
+        noteIndex++;
+        return note;
     }
 }
