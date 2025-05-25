@@ -9,11 +9,8 @@ import kr.ac.tukorea.ge.spgp2025.a2dg.framework.view.GameView;
 
 public class NoteSprite extends Sprite implements IRecyclable {
     protected Note note;
-
-    private static final float X_SPACE = 1.3f;
-    private static final float LEFT = 4.5f - 2 * X_SPACE;
-    private static final float WIDTH = 1.2f;
-    private static final float HEIGHT = 0.55f;
+    private static final float WIDTH = 200f;
+    private static final float HEIGHT = 100f;
 
     public static NoteSprite get(Note note) {
         NoteSprite ns = Scene.top().getRecyclable(NoteSprite.class);
@@ -29,10 +26,9 @@ public class NoteSprite extends Sprite implements IRecyclable {
 
     private void init(Note note) {
         this.note = note;
-        float x = LEFT + note.startX * X_SPACE;
+        float x = note.startX;
         float y = note.time;
-        setPosition(x, y, WIDTH, HEIGHT);
-        this.dy = 0.1f;
+        setPosition(x, -y, WIDTH, HEIGHT);
     }
 
     @Override
@@ -40,7 +36,8 @@ public class NoteSprite extends Sprite implements IRecyclable {
     }
     @Override
     public void update() {
-        super.update();
+        y += 50.0f * GameView.frameTime;
+        setPosition(x, y, WIDTH, HEIGHT);
     }
 
 }

@@ -28,8 +28,6 @@ public class MainScene extends Scene {
             songIndex = extras.getInt(TUKBeatActivity.SONG_INDEX, 0);
         }
         song = Song.get(songIndex);
-
-
         add(Layer.bg, new Sprite(R.mipmap.bg,w/2,h/2,w,h));
         add(Layer.bg, new Sprite(R.mipmap.judgeline,w/2,h-(50f/2f)-150f,w,50f));
     }
@@ -38,18 +36,9 @@ public class MainScene extends Scene {
     public void onEnter() {
         super.onEnter();
         song.loadNotes();
-        Note dummyNote = new Note();
-        dummyNote.time = 0;
-        dummyNote.startX = 0;
-        add(Layer.note, new NoteSprite() {
-            {
-                setPosition(450, 800, 200, 100);
-                Log.d("NoteSprite", "Manually added at (450, 800)");
-            }
-        });
-       // for (Note note: song.notes) {
-       //     add(Layer.note, NoteSprite.get(note));
-       // }
+       for (Note note: song.notes) {
+          add(Layer.note, NoteSprite.get(note));
+        }
         song.play();
     }
 
