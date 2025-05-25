@@ -207,7 +207,7 @@ public class Song {
     {
         if(noteIndex >= notes.size()) return null;
         Note note = notes.get(noteIndex);
-        if(note.time > MusicTime) return null;
+        if(note.time-5 > MusicTime) return null;
         Log.d(TAG,"Popping nodeIndex=" + noteIndex);
         noteIndex++;
         return note;
