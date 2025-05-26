@@ -214,4 +214,8 @@ public class Song {
         noteIndex++;
         return note;
     }
+
+    public float getNoteLength(){
+        return noteLength;
+    }
 }

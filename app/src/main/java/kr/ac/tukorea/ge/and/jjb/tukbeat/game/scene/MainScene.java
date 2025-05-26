@@ -19,6 +19,7 @@ public class MainScene extends Scene {
     public static MainScene scene;
     private float musicTime;
     private final Song song;
+    private boolean isPlaying =false;
     float w = Metrics.width, h = Metrics.height;
 
     public enum Layer {
@@ -48,6 +49,7 @@ public class MainScene extends Scene {
             @Override
             public void run() {
                 song.play();
+                isPlaying= true;
             }
         }, 2500);
     }
@@ -78,8 +80,16 @@ public class MainScene extends Scene {
     @Override
     public void update() {
         super.update();
+        if(!isPlaying) return;
+
         float deltaTime = GameView.frameTime;
         musicTime += deltaTime;
+
+        if (musicTime > song.getNoteLength() + NoteSprite.screenfulTime())
+        {
+            pop();
+            return;
+        }
 
         Note note = song.popNoteBefore(musicTime);
         if(note == null) return;
