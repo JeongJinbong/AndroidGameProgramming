@@ -3,6 +3,7 @@ package kr.ac.tukorea.ge.and.jjb.tukbeat.game.scene;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
+import android.view.MotionEvent;
 
 import kr.ac.tukorea.ge.and.jjb.tukbeat.R;
 import kr.ac.tukorea.ge.and.jjb.tukbeat.data.Song;
@@ -78,6 +79,19 @@ public class MainScene extends Scene {
     }
 
     @Override
+    public boolean onTouchEvent(MotionEvent event)
+    {
+        boolean handled = super.onTouchEvent(event);
+        if(handled) return true;
+
+        if(event.getAction() != MotionEvent.ACTION_DOWN) return false;
+        float [] pt = Metrics.fromScreen(event.getX(),event.getY());
+        float x= pt[0];
+
+        return false;
+    }
+
+    @Override
     public void update() {
         super.update();
         if(!isPlaying) return;
@@ -85,14 +99,9 @@ public class MainScene extends Scene {
         float deltaTime = GameView.frameTime;
         musicTime += deltaTime;
 
-        if (musicTime > song.getNoteLength() + NoteSprite.screenfulTime())
-        {
-            pop();
-            return;
-        }
-
         Note note = song.popNoteBefore(musicTime);
-        if(note == null) return;
-        add(Layer.note, NoteSprite.get(note));
+        if(note != null) {
+            add(Layer.note, NoteSprite.get(note));
+        }
     }
 }

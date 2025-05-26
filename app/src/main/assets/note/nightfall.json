@@ -8,5 +8,16 @@
   "type": "TAP",
   "time": 3.2,
   "startX": 400
-}
+},
+
+  {
+    "type": "TAP",
+    "time": 5.2,
+    "startX":400
+  },
+  {
+    "type": "TAP",
+    "time": 5.2,
+    "startX": 600
+  }
 ]
