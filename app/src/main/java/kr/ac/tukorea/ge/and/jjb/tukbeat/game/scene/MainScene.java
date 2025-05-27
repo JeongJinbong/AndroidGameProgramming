@@ -5,9 +5,13 @@ import android.os.Handler;
 import android.util.Log;
 import android.view.MotionEvent;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+
 import kr.ac.tukorea.ge.and.jjb.tukbeat.R;
 import kr.ac.tukorea.ge.and.jjb.tukbeat.data.Song;
 import kr.ac.tukorea.ge.spgp2025.a2dg.framework.activity.GameActivity;
+import kr.ac.tukorea.ge.spgp2025.a2dg.framework.interfaces.IGameObject;
 import kr.ac.tukorea.ge.spgp2025.a2dg.framework.scene.Scene;
 import kr.ac.tukorea.ge.and.jjb.tukbeat.data.Note;
 import kr.ac.tukorea.ge.spgp2025.a2dg.framework.objects.Sprite;
@@ -86,9 +90,45 @@ public class MainScene extends Scene {
 
         if(event.getAction() != MotionEvent.ACTION_DOWN) return false;
         float [] pt = Metrics.fromScreen(event.getX(),event.getY());
-        float x= pt[0];
+        float x= pt[0], y = pt[1];
 
-        return false;
+        NoteSprite ns =findNearestNote(x,y);
+        if(ns == null) return false;
+
+        float timediff = ns.note.time - musicTime;
+        Call.Type type= Call.typeWithTimeDiff(timediff);
+        //call.set(type);
+        remove(Layer.note,ns);
+
+        return true;
+    }
+
+    private NoteSprite findNearestNote(float x, float y) {
+        float maxDistance = 100f;
+        float timeThreshold = 0.2f;
+
+        NoteSprite nearest = null;
+        float bestScore = Float.MAX_VALUE;
+
+        ArrayList<IGameObject> notes = objectsAt(Layer.note);
+        for(IGameObject go : notes) {
+            if (!(go instanceof NoteSprite)) continue;
+            NoteSprite ns = (NoteSprite) go;
+
+            float dx = x - ns.getX();
+            float dy = y - ns.getY();
+            float distance = (float) Math.sqrt(dx * dx + dy * dy);
+            float timeDiff = Math.abs(ns.note.time - musicTime);
+
+            if (distance < maxDistance && timeDiff < timeThreshold) {
+                float score = distance + timeDiff * 100; // 거리 + 시간 차를 점수화
+                if (score < bestScore) {
+                    bestScore = score;
+                    nearest = ns;
+                }
+            }
+        }
+        return nearest;
     }
 
     @Override

@@ -15,8 +15,6 @@ public class NoteSprite extends Sprite implements IRecyclable {
     private static final float WIDTH = 200f;
     private static final float HEIGHT = 100f;
     private static final float SPEED = 450.0f;
-
-
     private static final float LINE_Y = Metrics.height-(50f/2f)-150f;
 
     public static NoteSprite get(Note note) {
@@ -38,7 +36,6 @@ public class NoteSprite extends Sprite implements IRecyclable {
 
     private void init(Note note) {
         this.note = note;
-        float x = note.startX;
         update();
     }
 
@@ -59,4 +56,11 @@ public class NoteSprite extends Sprite implements IRecyclable {
         setPosition(note.startX, y, WIDTH, HEIGHT);
     }
 
+    public float getX() {
+        return dstRect.centerX();
+    }
+
+    public float getY() {
+        return dstRect.centerY();
+    }
 }
