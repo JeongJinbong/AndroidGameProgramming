@@ -84,4 +84,12 @@ public class Sprite implements IGameObject {
     public void setBitmap(Bitmap bitmap) {
         this.bitmap =bitmap;
     }
+
+    public float getX() {
+        return x;
+    }
+
+    public float getY() {
+        return y;
+    }
 }

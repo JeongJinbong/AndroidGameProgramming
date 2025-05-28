@@ -1,5 +1,8 @@
 package kr.ac.tukorea.ge.and.jjb.tukbeat.game.scene;
 
+import android.graphics.Canvas;
+import android.graphics.Rect;
+import android.graphics.RectF;
 import android.util.Log;
 
 import kr.ac.tukorea.ge.and.jjb.tukbeat.R;
@@ -11,7 +14,7 @@ import kr.ac.tukorea.ge.spgp2025.a2dg.framework.view.Metrics;
 
 public class LongNoteSprite extends Sprite implements IRecyclable {
     protected Note note;
-    private static final float WIDTH = 200f;
+    private static final float WIDTH = 220f;
     private static final float SPEED = 450.0f;
     private static final float LINE_Y = Metrics.height - (50f / 2f) - 150f;
 
@@ -25,7 +28,7 @@ public class LongNoteSprite extends Sprite implements IRecyclable {
     }
 
     public LongNoteSprite() {
-        super(R.mipmap.slide_note);
+        super(R.mipmap.long_note);
     }
 
     private void init(Note note) {
@@ -57,11 +60,7 @@ public class LongNoteSprite extends Sprite implements IRecyclable {
             return;
         }
 
-        // 중심 좌표로 설정
         float centerY = topY + height / 2f;
-
         setPosition(note.startX, centerY, WIDTH, height);
-        Log.d("LongNote", "start=" + note.time + ", end=" + note.endTime + ", topY=" + topY + ", bottomY=" + bottomY + ", height=" + height);
-
     }
 }

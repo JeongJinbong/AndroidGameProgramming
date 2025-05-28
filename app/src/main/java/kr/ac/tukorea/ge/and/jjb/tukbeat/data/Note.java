@@ -6,6 +6,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 public class Note {
+    public boolean isHolding;
+    public boolean isReleased;
+    public boolean isJudged;
+
     public enum Type { TAP, HOLD, SLIDE }
 
     public Type type;

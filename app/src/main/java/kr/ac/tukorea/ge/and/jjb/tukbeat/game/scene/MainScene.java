@@ -88,48 +88,103 @@ public class MainScene extends Scene {
         boolean handled = super.onTouchEvent(event);
         if(handled) return true;
 
-        if(event.getAction() != MotionEvent.ACTION_DOWN) return false;
         float [] pt = Metrics.fromScreen(event.getX(),event.getY());
         float x= pt[0], y = pt[1];
 
-        NoteSprite ns =findNearestNote(x,y);
-        if(ns == null) return false;
-
-        float timediff = ns.note.time - musicTime;
-        Call.Type type= Call.typeWithTimeDiff(timediff);
-        //call.set(type);
-        remove(Layer.note,ns);
-
-        return true;
+        switch(event.getAction()){
+            case MotionEvent.ACTION_DOWN:
+                return handleTouchDown(x,y);
+            case MotionEvent.ACTION_UP:
+                return handleTouchUp(x,y);
+        }
+        return false;
     }
 
-    private NoteSprite findNearestNote(float x, float y) {
-        float maxDistance = 100f;
-        float timeThreshold = 0.2f;
+    private boolean handleTouchUp(float x, float y) {
+        ArrayList<IGameObject> notes = objectsAt(Layer.note);
+        for (IGameObject go : notes) {
+            if (!(go instanceof LongNoteSprite)) continue;
+            LongNoteSprite lns = (LongNoteSprite) go;
+            if (!lns.note.isHolding) continue;
 
-        NoteSprite nearest = null;
+            float timeDiff = lns.note.endTime - musicTime;
+            if (Math.abs(timeDiff) < 0.15f) {
+                lns.note.isReleased = true;
+                lns.note.isHolding = false;
+                remove(Layer.note, lns);
+                return true;
+            } else {
+                lns.note.isHolding = false;
+                lns.note.isReleased = false;
+                remove(Layer.note, lns);
+                return true;
+            }
+        }
+        return false;
+    }
+    private boolean handleTouchDown(float x, float y) {
+        Sprite noteSprite = findNearestNote(x, y);
+        if (noteSprite == null) return false;
+
+        if (noteSprite instanceof NoteSprite) {
+            NoteSprite ns = (NoteSprite) noteSprite;
+            float timeDiff = ns.note.time - musicTime;
+            Call.Type type = Call.typeWithTimeDiff(timeDiff);
+            remove(Layer.note, ns);
+            return true;
+        }
+
+        if (noteSprite instanceof LongNoteSprite) {
+            LongNoteSprite lns = (LongNoteSprite) noteSprite;
+            float timeDiff = lns.note.time - musicTime;
+            if (Math.abs(timeDiff) < 0.15f) {
+                lns.note.isHolding = true;
+                lns.note.isJudged = true;
+                return true;
+            }
+        }
+        return false;
+    }
+
+
+
+    private Sprite findNearestNote(float x, float y) {
+        float maxDistance = 100f;
+        float timeThreshold = 0.3f;
+
+        Sprite nearest = null;
         float bestScore = Float.MAX_VALUE;
 
         ArrayList<IGameObject> notes = objectsAt(Layer.note);
-        for(IGameObject go : notes) {
-            if (!(go instanceof NoteSprite)) continue;
-            NoteSprite ns = (NoteSprite) go;
+        for (IGameObject go : notes) {
+            if (!(go instanceof Sprite)) continue;
+            Sprite s = (Sprite) go;
 
-            float dx = x - ns.getX();
-            float dy = y - ns.getY();
+            float dx = x - s.getX();
+            float dy = y - s.getY();
             float distance = (float) Math.sqrt(dx * dx + dy * dy);
-            float timeDiff = Math.abs(ns.note.time - musicTime);
+
+            float noteTime = 0f;
+            if (s instanceof NoteSprite) {
+                noteTime = ((NoteSprite) s).note.time;
+            } else if (s instanceof LongNoteSprite) {
+                noteTime = ((LongNoteSprite) s).note.time;
+            } else continue;
+
+            float timeDiff = Math.abs(noteTime - musicTime);
 
             if (distance < maxDistance && timeDiff < timeThreshold) {
-                float score = distance + timeDiff * 100; // 거리 + 시간 차를 점수화
+                float score = distance + timeDiff * 100;
                 if (score < bestScore) {
                     bestScore = score;
-                    nearest = ns;
+                    nearest = s;
                 }
             }
         }
+
         return nearest;
     }
+
 
     @Override
     public void update() {
