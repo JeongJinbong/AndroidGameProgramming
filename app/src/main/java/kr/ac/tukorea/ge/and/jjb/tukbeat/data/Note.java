@@ -10,7 +10,12 @@ public class Note {
 
     public Type type;
     public float time;
+    public float endTime;
     public float startX;
+
+    public boolean isLongNote(){
+        return type ==Type.HOLD;
+    }
     public static Note parse(JsonReader reader) throws IOException {
         Note note = new Note();
         reader.beginObject();
@@ -23,6 +28,9 @@ public class Note {
                 case "time":
                     note.time = (float) reader.nextDouble();
                     break;
+                case "endTime":
+                    note.endTime = (float) reader.nextDouble();
+                    break;
                 case "startX":
                     note.startX = (float) reader.nextDouble();
                     break;
@@ -31,6 +39,10 @@ public class Note {
             }
         }
         reader.endObject();
+
+        if(note.type != Type.HOLD){
+            note.endTime = note.time;
+        }
         return note;
     }
 }

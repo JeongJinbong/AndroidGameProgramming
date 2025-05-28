@@ -141,7 +141,15 @@ public class MainScene extends Scene {
 
         Note note = song.popNoteBefore(musicTime);
         if(note != null) {
-            add(Layer.note, NoteSprite.get(note));
+
+            switch(note.type){
+                case TAP:
+                add(Layer.note, NoteSprite.get(note));
+                break;
+                case HOLD:
+                    add(Layer.note,LongNoteSprite.get(note));
+                    break;
+            }
         }
     }
 }

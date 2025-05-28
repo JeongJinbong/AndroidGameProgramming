@@ -19,5 +19,11 @@
     "type": "TAP",
     "time": 5.2,
     "startX": 600
+  },
+  {
+    "type": "HOLD",
+    "time": 6.2,
+    "endTime": 9.2,
+    "startX": 200
   }
 ]
