@@ -5,7 +5,12 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
 
+import androidx.activity.EdgeToEdge;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 import androidx.viewpager2.widget.ViewPager2;
 
 import java.util.ArrayList;
@@ -13,9 +18,15 @@ import java.util.ArrayList;
 import kr.ac.tukorea.ge.and.jjb.tukbeat.Adapter.SongImageAdapter;
 import kr.ac.tukorea.ge.and.jjb.tukbeat.R;
 import kr.ac.tukorea.ge.and.jjb.tukbeat.data.Song;
+import kr.ac.tukorea.ge.and.jjb.tukbeat.databinding.ActivityMainBinding;
 
 public class SongSelectionActivity extends AppCompatActivity {
+
+    private @NonNull ActivityMainBinding ui;
+
     private int currentSongIndex = 0;
+
+
     private ViewPager2 viewPager2;
     private TextView textTitle, textArtist;
     private ArrayList<Song> songs;
@@ -24,7 +35,15 @@ public class SongSelectionActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.selection_activity_main);
+        EdgeToEdge.enable(this);
+        ui = ActivityMainBinding.inflate(getLayoutInflater());
+        setContentView(ui.getRoot());
+        ViewCompat.setOnApplyWindowInsetsListener(ui.getRoot().findViewById(R.id.main), (v, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            return insets;
+        });
+
 
         viewPager2 = findViewById(R.id.viewPager2);
         textTitle = findViewById(R.id.textTitle);

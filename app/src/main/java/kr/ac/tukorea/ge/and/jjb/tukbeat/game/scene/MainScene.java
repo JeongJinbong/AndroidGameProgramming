@@ -1,5 +1,6 @@
 package kr.ac.tukorea.ge.and.jjb.tukbeat.game.scene;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -35,10 +36,7 @@ public class MainScene extends Scene {
     public MainScene() {
         initLayers(Layer.COUNT);
         int songIndex = 0;
-        Bundle extras = GameActivity.activity.getIntent().getExtras();
-        if (extras != null) {
-            songIndex = extras.getInt(TUKBeatActivity.SONG_INDEX, 0);
-        }
+        Context context = GameView.view.getContext();
         song = Song.get(songIndex);
         add(Layer.bg, new Sprite(R.mipmap.bg, w / 2, h / 2, w, h));
         add(Layer.bg, new Sprite(R.mipmap.judgeline, w / 2, h - (50f / 2f) - 150f, w, 50f));
