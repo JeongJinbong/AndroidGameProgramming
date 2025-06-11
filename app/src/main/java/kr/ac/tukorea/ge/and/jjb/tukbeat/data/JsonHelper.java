@@ -1,4 +1,5 @@
 package kr.ac.tukorea.ge.and.jjb.tukbeat.data;
+
 import android.util.JsonReader;
 import android.util.Log;
 
@@ -28,6 +29,10 @@ public class JsonHelper {
             } else if (type == double.class) {
                 double value = reader.nextDouble();
                 Log.v(TAG, "double " + name + ": " + value + " - " + object);
+                field.set(object, value);
+            } else if (type == float.class) {
+                float value = (float) reader.nextDouble();
+                Log.v(TAG, "float " + name + ": " + value + " - " + object);
                 field.set(object, value);
             } else if (type == long.class) {
                 long value = reader.nextLong();

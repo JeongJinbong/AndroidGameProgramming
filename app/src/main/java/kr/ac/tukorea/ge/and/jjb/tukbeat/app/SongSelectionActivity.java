@@ -17,12 +17,12 @@ import java.util.ArrayList;
 
 import kr.ac.tukorea.ge.and.jjb.tukbeat.Adapter.SongImageAdapter;
 import kr.ac.tukorea.ge.and.jjb.tukbeat.R;
-import kr.ac.tukorea.ge.and.jjb.tukbeat.data.Song;
-import kr.ac.tukorea.ge.and.jjb.tukbeat.databinding.ActivityMainBinding;
+import kr.ac.tukorea.ge.and.jjb.tukbeat.data.SongLoader;
+import kr.ac.tukorea.ge.and.jjb.tukbeat.databinding.SelectionActivityMainBinding;
 
 public class SongSelectionActivity extends AppCompatActivity {
 
-    private @NonNull ActivityMainBinding ui;
+    private @NonNull SelectionActivityMainBinding ui;
 
     private int currentSongIndex = 0;
 
@@ -36,20 +36,20 @@ public class SongSelectionActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
-        ui = ActivityMainBinding.inflate(getLayoutInflater());
+        ui = SelectionActivityMainBinding.inflate(getLayoutInflater());
         setContentView(ui.getRoot());
-        ViewCompat.setOnApplyWindowInsetsListener(ui.getRoot().findViewById(R.id.main), (v, insets) -> {
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.SongSelection), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
 
+        new SongLoader(this).loadSongs();
 
         viewPager2 = findViewById(R.id.viewPager2);
         textTitle = findViewById(R.id.textTitle);
         textArtist = findViewById(R.id.textArtist);
 
-        songs = Song.load(this, "song.json");
         SongImageAdapter adapter = new SongImageAdapter(this, songs);
         viewPager2.setAdapter(adapter);
 
