@@ -25,5 +25,12 @@
     "time": 6.2,
     "endTime": 9.2,
     "startX": 200
+  },
+  {
+    "type": "SLIDE",
+    "time": 10.0,
+    "endTime": 13.0,
+    "startX": 300,
+    "pathX": [300, 350, 400, 450, 500]
   }
 ]

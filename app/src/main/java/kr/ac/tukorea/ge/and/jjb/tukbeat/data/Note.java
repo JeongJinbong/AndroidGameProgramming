@@ -16,9 +16,10 @@ public class Note {
     public float time;
     public float endTime;
     public float startX;
+    public ArrayList<Float> pathX;
 
     public boolean isLongNote(){
-        return type ==Type.HOLD;
+        return type ==Type.HOLD || type == Type.SLIDE;
     }
     public static Note parse(JsonReader reader) throws IOException {
         Note note = new Note();
@@ -38,13 +39,21 @@ public class Note {
                 case "startX":
                     note.startX = (float) reader.nextDouble();
                     break;
+                case "pathX":
+                    note.pathX = new ArrayList<>();
+                    reader.beginArray();
+                    while (reader.hasNext()) {
+                        note.pathX.add((float) reader.nextDouble());
+                    }
+                    reader.endArray();
+                    break;
                 default:
                     reader.skipValue();
             }
         }
         reader.endObject();
 
-        if(note.type != Type.HOLD){
+        if (note.type == Type.TAP) {
             note.endTime = note.time;
         }
         return note;

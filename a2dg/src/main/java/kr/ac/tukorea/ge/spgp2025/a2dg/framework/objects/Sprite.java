@@ -43,6 +43,11 @@ public class Sprite implements IGameObject {
         RectUtil.setRect(dstRect, x, y, radius);
 
     }
+    public void setPosition(float x, float y) {
+        this.x = x;
+        this.y = y;
+        RectUtil.setRect(dstRect, x, y, width, height);
+    }
     public void setPosition(float x, float y, float width, float height) {
         this.x = x;
         this.y = y;
@@ -51,12 +56,24 @@ public class Sprite implements IGameObject {
         radius = Math.min(width, height) / 2;
         RectUtil.setRect(dstRect, x, y, width, height);
     }
+
+    public float getX() {
+        return x;
+    }
+
+    public float getY() {
+        return y;
+    }
+
     public float getWidth() {
         return width;
     }
 
     public float getHeight() {
         return height;
+    }
+    public float getRadius() {
+        return radius;
     }
     public float getPropotionalHeight(float width) {
         return width / bitmap.getWidth() * bitmap.getHeight();
@@ -79,17 +96,5 @@ public class Sprite implements IGameObject {
     @Override
     public String toString() {
         return getClass().getSimpleName() + "@" + System.identityHashCode(this) + "(" + (int)width + "x" + (int)height + ")";
-    }
-
-    public void setBitmap(Bitmap bitmap) {
-        this.bitmap =bitmap;
-    }
-
-    public float getX() {
-        return x;
-    }
-
-    public float getY() {
-        return y;
     }
 }

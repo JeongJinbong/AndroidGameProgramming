@@ -1,6 +1,5 @@
 package kr.ac.tukorea.ge.spgp2025.a2dg.framework.activity;
 
-import android.app.Activity;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -16,14 +15,12 @@ import kr.ac.tukorea.ge.spgp2025.a2dg.framework.view.GameView;
 public class GameActivity extends AppCompatActivity {
 
     private static final String TAG = GameActivity.class.getSimpleName();
-    public static Activity activity;
     private GameView gameView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         gameView = new GameView(this);
-        activity = this;
         setContentView(gameView);
 
         setFullScreen();

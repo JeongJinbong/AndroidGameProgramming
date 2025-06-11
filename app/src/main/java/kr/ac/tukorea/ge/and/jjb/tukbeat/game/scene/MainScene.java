@@ -24,7 +24,7 @@ public class MainScene extends Scene {
     public static MainScene scene;
     private float musicTime;
     private final Song song;
-    private boolean isPlaying =false;
+    private boolean isPlaying = false;
     float w = Metrics.width, h = Metrics.height;
 
     public enum Layer {
@@ -54,7 +54,7 @@ public class MainScene extends Scene {
             @Override
             public void run() {
                 song.play();
-                isPlaying= true;
+                isPlaying = true;
             }
         }, 2500);
     }
@@ -83,19 +83,18 @@ public class MainScene extends Scene {
     }
 
     @Override
-    public boolean onTouchEvent(MotionEvent event)
-    {
+    public boolean onTouchEvent(MotionEvent event) {
         boolean handled = super.onTouchEvent(event);
-        if(handled) return true;
+        if (handled) return true;
 
-        float [] pt = Metrics.fromScreen(event.getX(),event.getY());
-        float x= pt[0], y = pt[1];
+        float[] pt = Metrics.fromScreen(event.getX(), event.getY());
+        float x = pt[0], y = pt[1];
 
-        switch(event.getAction()){
+        switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
-                return handleTouchDown(x,y);
+                return handleTouchDown(x, y);
             case MotionEvent.ACTION_UP:
-                return handleTouchUp(x,y);
+                return handleTouchUp(x, y);
         }
         return false;
     }
@@ -122,6 +121,7 @@ public class MainScene extends Scene {
         }
         return false;
     }
+
     private boolean handleTouchDown(float x, float y) {
         Sprite noteSprite = findNearestNote(x, y);
         if (noteSprite == null) return false;
@@ -145,7 +145,6 @@ public class MainScene extends Scene {
         }
         return false;
     }
-
 
 
     private Sprite findNearestNote(float x, float y) {
@@ -189,20 +188,24 @@ public class MainScene extends Scene {
     @Override
     public void update() {
         super.update();
-        if(!isPlaying) return;
+        if (!isPlaying) return;
 
         float deltaTime = GameView.frameTime;
         musicTime += deltaTime;
 
         Note note = song.popNoteBefore(musicTime);
-        if(note != null) {
-
-            switch(note.type){
+        if (note != null) {
+            switch (note.type) {
                 case TAP:
-                add(Layer.note, NoteSprite.get(note));
-                break;
+                    add(Layer.note, NoteSprite.get(note));
+                    break;
                 case HOLD:
-                    add(Layer.note,LongNoteSprite.get(note));
+                    add(Layer.note, LongNoteSprite.get(note));
+                    break;
+                case SLIDE:
+                    for (int i = 0; i < note.pathX.size(); i++) {
+                        add(Layer.note, SlideNoteSprite.get(note, i));
+                    }
                     break;
             }
         }

@@ -1,11 +1,9 @@
 package kr.ac.tukorea.ge.spgp2025.a2dg.framework.res;
 
-import android.content.res.AssetFileDescriptor;
 import android.media.AudioAttributes;
 import android.media.MediaPlayer;
 import android.media.SoundPool;
 
-import java.io.IOException;
 import java.util.HashMap;
 
 import kr.ac.tukorea.ge.spgp2025.a2dg.framework.view.GameView;
@@ -22,7 +20,6 @@ public class Sound {
         mediaPlayer.setLooping(true);
         mediaPlayer.start();
     }
-
     public static void stopMusic() {
         if (mediaPlayer == null) return;
         mediaPlayer.stop();
