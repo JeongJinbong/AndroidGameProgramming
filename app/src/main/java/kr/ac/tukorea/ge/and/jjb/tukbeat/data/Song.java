@@ -17,8 +17,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 
-import kr.ac.tukorea.ge.and.jjb.tukbeat.game.scene.NoteSprite;
-
 public class Song {
 
     public String title;
@@ -34,38 +32,6 @@ public class Song {
     protected static Handler handler = new Handler(Looper.getMainLooper());
     private MediaPlayer mediaPlayer;
 
-    protected int noteIndex;
-
-    public  ArrayList<Note> notes;
-    private float noteLength;
-
-    public void loadNotes() {
-        if (notes != null && !notes.isEmpty()) return;
-
-        notes = new ArrayList<>();
-        if (note == null) return;
-
-        float length = 0;
-        try {
-            InputStream is = assetManager.open(note);
-            JsonReader jr = new JsonReader(new InputStreamReader(is));
-            jr.beginArray();
-            while (jr.hasNext()) {
-                Note note = Note.parse(jr);
-                if (note == null) continue;
-                notes.add(note);
-                if (length < note.time) {
-                    length = note.time;
-                }
-            }
-            jr.endArray();
-            is.close();
-            this.noteLength = length;
-            Log.d(TAG, "Song loaded: " + notes.size() + " notes, " + noteLength + " ms.");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
 
     @NonNull
     @Override
@@ -74,8 +40,6 @@ public class Song {
     }
 
     public void play() {
-        loadNotes();
-        noteIndex=0;
         stop();
         try {
             AssetFileDescriptor afd = assetManager.openFd(media);
@@ -98,49 +62,42 @@ public class Song {
         }
     }
 
-    public void playDemo() {
-        stop();
+    public void playDemo(Context context) {
         try {
-            AssetFileDescriptor afd = assetManager.openFd(media);
+            AssetFileDescriptor afd = context.getAssets().openFd(media);            FileDescriptor fd = afd.getFileDescriptor();
             mediaPlayer = new MediaPlayer();
-            mediaPlayer.setDataSource(afd.getFileDescriptor(), afd.getStartOffset(), afd.getLength());
+            mediaPlayer.setDataSource(fd, afd.getStartOffset(), afd.getLength());
             mediaPlayer.prepare();
             mediaPlayer.seekTo(demoStart);
+            mediaPlayer.start();
 
-            mediaPlayer.setOnErrorListener((mp, what, extra) -> {
-                Log.e(TAG, "MediaPlayer error in demo: what=" + what + ", extra=" + extra);
-                return true;
+            mediaPlayer.setOnSeekCompleteListener(mp -> {
+                mp.start();
+            });
+            mediaPlayer.setOnCompletionListener(mp -> {
             });
 
-            mediaPlayer.setOnCompletionListener(mp -> {
-                if (mediaPlayer != null) {
-                    try {
+            new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    if (mediaPlayer != null && mediaPlayer.isPlaying()) {
                         if (mediaPlayer.getCurrentPosition() >= demoEnd) {
                             mediaPlayer.seekTo(demoStart);
-                            mediaPlayer.start();
                         }
-                    } catch (IllegalStateException e) {
+                        new Handler(Looper.getMainLooper()).postDelayed(this, 200);
                     }
                 }
-            });
-
-            mediaPlayer.start();
-            Log.d(TAG, "Playing demo in loop: " + title + "/" + artist);
-
-        } catch (IOException e) {
+            }, 200);
+        } catch(IOException e) {
             e.printStackTrace();
         }
     }
 
     public void stop() {
         if (mediaPlayer != null) {
-            try {
-                mediaPlayer.stop();
-            } catch (IllegalStateException e) {
-            }
-            mediaPlayer.release();
+            Log.d(TAG,"Stopping " + this);
+            mediaPlayer.stop();
             mediaPlayer = null;
-            Log.d(TAG, "Stopped " + title + "/" + artist);
         }
     }
 
@@ -160,17 +117,4 @@ public class Song {
         return songs.get(index);
     }
 
-    public Note popNoteBefore(float MusicTime)
-    {
-        if(noteIndex >= notes.size()) return null;
-        Note note = notes.get(noteIndex);
-        if(note.time-NoteSprite.screenfulTime() > MusicTime) return null;
-        Log.d(TAG,"Popping nodeIndex=" + noteIndex);
-        noteIndex++;
-        return note;
-    }
-
-    public float getNoteLength(){
-        return noteLength;
-    }
 }

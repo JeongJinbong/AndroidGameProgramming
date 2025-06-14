@@ -62,7 +62,7 @@ public class SongSelectionActivity extends AppCompatActivity {
         currentSong = songs.get(position);
         ui.textTitle.setText(currentSong.title);
         ui.textArtist.setText(currentSong.artist);
-        // currentSong.playDemo();
+        currentSong.playDemo(this);
     }
 
     private void stopCurrentSong() {

@@ -46,8 +46,6 @@ public class MainScene extends Scene {
     public void onEnter() {
         scene = this;
         super.onEnter();
-        song.loadNotes();
-
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -186,26 +184,6 @@ public class MainScene extends Scene {
     @Override
     public void update() {
         super.update();
-        if (!isPlaying) return;
 
-        float deltaTime = GameView.frameTime;
-        musicTime += deltaTime;
-
-        Note note = song.popNoteBefore(musicTime);
-        if (note != null) {
-            switch (note.type) {
-                case TAP:
-                    add(Layer.note, NoteSprite.get(note));
-                    break;
-                case HOLD:
-                    add(Layer.note, LongNoteSprite.get(note));
-                    break;
-                case SLIDE:
-                    for (int i = 0; i < note.pathX.size(); i++) {
-                        add(Layer.note, SlideNoteSprite.get(note, i));
-                    }
-                    break;
-            }
         }
-    }
 }
