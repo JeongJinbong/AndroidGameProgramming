@@ -1,5 +1,6 @@
 package kr.ac.tukorea.ge.and.jjb.tukbeat.app;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 
@@ -20,14 +21,11 @@ public class TUKBeatActivity extends GameActivity {
         GameView.drawsDebugStuffs = BuildConfig.DEBUG;
         Metrics.setGameSize(1600,900);
         super.onCreate(savedInstanceState);
-
-        Bundle extras = getIntent().getExtras();
-        if (extras != null) {
-            int index = extras.getInt(SONG_INDEX);
-            Log.d(TAG, "Selected Song Index = " + index);
-        }
+        Intent intent = getIntent();
+        Bundle extras = intent.getExtras();
+        int songIndex = extras.getInt(SONG_INDEX);
+        Log.d(TAG,"Song Index = " + songIndex);
         new MainScene().push();
-
     }
 
 

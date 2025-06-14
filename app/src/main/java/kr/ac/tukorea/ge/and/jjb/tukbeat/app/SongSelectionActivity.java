@@ -23,9 +23,7 @@ import kr.ac.tukorea.ge.and.jjb.tukbeat.databinding.SelectionActivityMainBinding
 public class SongSelectionActivity extends AppCompatActivity {
 
     private @NonNull SelectionActivityMainBinding ui;
-    private int currentSongIndex = 0;
     private Song currentSong;
-    private ArrayList<Song> songs;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,11 +38,11 @@ public class SongSelectionActivity extends AppCompatActivity {
             return insets;
         });
 
-        songs = new SongLoader(this).loadSongs();
-        SongImageAdapter adapter = new SongImageAdapter(this, songs);
+        Song.songs = new SongLoader(this).loadSongs();
+        SongImageAdapter adapter = new SongImageAdapter(this, Song.songs);
         ui.viewPager2.setAdapter(adapter);
 
-        if (!songs.isEmpty()) {
+        if (!Song.songs.isEmpty()) {
             updateInfo(0);
         }
 
@@ -58,8 +56,8 @@ public class SongSelectionActivity extends AppCompatActivity {
     }
 
     private void updateInfo(int position) {
-        currentSongIndex = position;
-        currentSong = songs.get(position);
+        Song.currentSongIndex = position;
+        currentSong = Song.songs.get(position);
         ui.textTitle.setText(currentSong.title);
         ui.textArtist.setText(currentSong.artist);
         currentSong.playDemo(this);
@@ -86,7 +84,6 @@ public class SongSelectionActivity extends AppCompatActivity {
     public void onBtnStart(View view) {
         stopCurrentSong();
         Intent intent = new Intent(this, TUKBeatActivity.class);
-        intent.putExtra(TUKBeatActivity.SONG_INDEX, currentSongIndex);
         startActivity(intent);
     }
 }

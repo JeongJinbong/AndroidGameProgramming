@@ -49,7 +49,6 @@ public class MainScene extends Scene {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                song.play();
                 isPlaying = true;
             }
         }, 2500);
