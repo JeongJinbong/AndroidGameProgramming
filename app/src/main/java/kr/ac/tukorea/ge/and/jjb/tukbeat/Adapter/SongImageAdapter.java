@@ -46,13 +46,13 @@ public class SongImageAdapter extends RecyclerView.Adapter<SongImageAdapter.Imag
     @Override
     public void onBindViewHolder(@NonNull ImageViewHolder holder, int position) {
         String fileName = songs.get(position).thumbnail;
-        try {
-            InputStream is = context.getAssets().open(fileName);
-            Bitmap bitmap = BitmapFactory.decodeStream(is);
+        try (InputStream is = context.getAssets().open(fileName)) {
+            BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inSampleSize = 2;
+
+            Bitmap bitmap = BitmapFactory.decodeStream(is, null, options);
             holder.imageView.setImageBitmap(bitmap);
-            is.close();
         } catch (IOException e) {
-            e.printStackTrace();
         }
     }
 

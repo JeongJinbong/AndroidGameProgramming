@@ -39,45 +39,6 @@ public class Song {
     public  ArrayList<Note> notes;
     private float noteLength;
 
-    public static ArrayList<Song> load(Context context, String filename) {
-        songs = new ArrayList<>();
-        try {
-            assetManager = context.getAssets();
-            InputStream is = assetManager.open(filename);
-            JsonReader jr = new JsonReader(new InputStreamReader(is));
-            jr.beginArray();
-            while (jr.hasNext()) {
-                Song song = loadSong(jr);
-                if (song != null) {
-                    songs.add(song);
-                    Log.d(TAG, "Songs count =" + songs.size() + " " + song);
-                }
-            }
-            jr.endArray();
-            jr.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return songs;
-    }
-
-    private static Song loadSong(JsonReader jr) {
-        Song song = new Song();
-        try {
-            jr.beginObject();
-            while (jr.hasNext()) {
-                String name = jr.nextName();
-                if (!JsonHelper.readProperty(song, name, jr)) {
-                    jr.skipValue();
-                }
-            }
-            jr.endObject();
-        } catch (IOException e) {
-            return null;
-        }
-        return song;
-    }
-
     public void loadNotes() {
         if (notes != null && !notes.isEmpty()) return;
 
@@ -104,12 +65,6 @@ public class Song {
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
-
-
-    public static void unload() {
-        songs.clear();
-        assetManager = null;
     }
 
     @NonNull
