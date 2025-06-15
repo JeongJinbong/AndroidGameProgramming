@@ -7,12 +7,13 @@ import kr.ac.tukorea.ge.and.jjb.tukbeat.data.Note;
 import kr.ac.tukorea.ge.spgp2025.a2dg.framework.objects.Sprite;
 import kr.ac.tukorea.ge.spgp2025.a2dg.framework.interfaces.IRecyclable;
 import kr.ac.tukorea.ge.spgp2025.a2dg.framework.scene.Scene;
+import kr.ac.tukorea.ge.spgp2025.a2dg.framework.view.GameView;
 
 public class NoteSprite extends Sprite implements IRecyclable {
     protected Note note;
     protected static final float WIDTH = 200f;
     protected static final float HEIGHT = 100f;
-    protected static final float SPEED = 450.0f;
+    protected static final float SPEED = 400.0f;
     protected static final float LINE_Y = 725.0f;
 
     public NoteSprite() {
@@ -26,7 +27,7 @@ public class NoteSprite extends Sprite implements IRecyclable {
     private NoteSprite init(Note note) {
         this.note = note;
         float x = note.startX;
-        float y= note.time/10.0f;
+        float y= -note.time;
         setPosition(x,y);
         return this;
     }
@@ -37,7 +38,8 @@ public class NoteSprite extends Sprite implements IRecyclable {
     }
     @Override
     public void update() {
-
+        y+= SPEED * GameView.frameTime;
+        setPosition(x,y);
     }
 
     public float getX() {
