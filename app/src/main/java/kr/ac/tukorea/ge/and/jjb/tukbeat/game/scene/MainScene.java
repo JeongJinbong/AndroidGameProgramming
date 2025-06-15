@@ -21,9 +21,10 @@ public class MainScene extends Scene {
     private final Song song;
     private float musicTime;
     float w = Metrics.width, h = Metrics.height;
+    protected  Call call;
 
     public enum Layer {
-        bg, note;
+        bg, note, explosion, ui, call;
         public static final int COUNT = values().length;
     }
 
@@ -36,6 +37,8 @@ public class MainScene extends Scene {
         add(Layer.bg, new Sprite(R.mipmap.judgeline, w / 2, h - (50f / 2f) - 150f, w, 50f));
 
         song.loadNotes(context);
+        add(Layer.call, call = new Call());
+
     }
 
     public float getMusicTime(){
@@ -46,8 +49,9 @@ public class MainScene extends Scene {
     public void update() {
         musicTime += GameView.frameTime;
         super.update();
-
         float timeOffset = NoteSprite.screenfulTime();
+
+
         while(true){
             Note note = song.popNoteBefore(musicTime+timeOffset);
             if(note == null) break;
@@ -86,43 +90,55 @@ public class MainScene extends Scene {
     public boolean onTouchEvent(MotionEvent event){
         int action = event.getActionMasked();
         int pointerCount = event.getPointerCount();
+        int actionIndex = event.getActionIndex();
 
         if (action == MotionEvent.ACTION_DOWN || action == MotionEvent.ACTION_POINTER_DOWN) {
             for (int i = 0; i < pointerCount; i++) {
+                if (i == actionIndex &&
+                        (action == MotionEvent.ACTION_UP || action == MotionEvent.ACTION_POINTER_UP)) {
+                    continue;
+                }
                 float tx = event.getX(i);
                 float ty = event.getY(i);
-                judgeNoteAt(tx, ty);
+                float[] pt = Metrics.fromScreen(tx, ty);
+                judgeNoteAt(pt[0], pt[1]);  // 터치 좌표 기준 판정
             }
         }
+
         return true;
     }
 
     private void judgeNoteAt(float tx, float ty) {
-        NoteSprite hit = findNearestNote(tx, ty);
-        if (hit == null) return;
+        NoteSprite ns = findNearestNote(tx, ty);
+        if (ns == null) return;
 
-        float diff = hit.note.time / 1000f - musicTime;
+        float diff = ns.note.time / 1000f - musicTime;
         Call.Type type = Call.typeWithTimeDiff(diff);
+        call.set(type);
+
+        ExplodingNote ex = ExplodingNote.get(type, ns);
+        add(Layer.explosion, ex);
+        remove(Layer.note, ns);
     }
 
     private NoteSprite findNearestNote(float tx, float ty) {
-        float maxDist = 150f; // 터치 허용 거리 (픽셀)
-        float timeWindow = 0.15f; // 시간 판정 허용 (초)
+        float maxDistance = 150f;
+        float maxTimeDiff = 0.15f;
 
         NoteSprite nearest = null;
         float bestScore = Float.MAX_VALUE;
 
-        for (IGameObject obj : objectsAt(Layer.note)) {
-            if (!(obj instanceof NoteSprite)) continue;
-            NoteSprite ns = (NoteSprite) obj;
+        for (IGameObject go : objectsAt(Layer.note)) {
+            if (!(go instanceof NoteSprite)) continue;
+            NoteSprite ns = (NoteSprite) go;
 
             float dx = Math.abs(ns.getX() - tx);
-            float dy = Math.abs(ns.getY() - ty);
+            float dy = Math.abs(ns.getY() - NoteSprite.LINE_Y);
             float dt = Math.abs(ns.note.time / 1000f - musicTime);
 
-            if (dx > maxDist || dy > maxDist || dt > timeWindow) continue;
+            if (dx > maxDistance || dy > maxDistance || dt > maxTimeDiff) continue;
 
-            float score = dx + dy + dt * 1000; // 종합 점수
+            float score = dx + dy + dt * 1000;
             if (score < bestScore) {
                 bestScore = score;
                 nearest = ns;
@@ -131,5 +147,4 @@ public class MainScene extends Scene {
 
         return nearest;
     }
-
 }

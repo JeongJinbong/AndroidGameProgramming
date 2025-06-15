@@ -36,7 +36,6 @@ public class Song {
     private float noteLength;
     protected  int noteIndex; // 어느 노트까지 만들었는지 기억
 
-
     @NonNull
     @Override
     public String toString() {
@@ -159,5 +158,7 @@ public class Song {
         noteIndex++;
         return note;
     }
+
+
 
 }

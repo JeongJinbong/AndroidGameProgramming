@@ -54,4 +54,8 @@ public class AnimSprite extends Sprite {
         srcRect.set(frameIndex * frameWidth, 0, (frameIndex + 1) * frameWidth, frameHeight);
         canvas.drawBitmap(bitmap, srcRect, dstRect, null);
     }
+
+    public void setFps(float fps){
+        this.fps = fps;
+    }
 }
