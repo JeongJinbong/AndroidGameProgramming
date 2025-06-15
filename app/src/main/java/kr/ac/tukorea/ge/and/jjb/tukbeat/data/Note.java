@@ -9,8 +9,8 @@ import java.util.Arrays;
 public class Note {
   public String type;
   public float time;
-  public float endTime;
   public int startX;
+  public float endTime;
   public int[] pathX;
 
     @Override
@@ -18,9 +18,7 @@ public class Note {
         return "Note{" +
                 "type='" + type + '\'' +
                 ", time=" + time +
-                ", endTime=" + endTime +
                 ", startX=" + startX +
-                ", pathX=" + Arrays.toString(pathX) +
                 '}';
     }
 
@@ -38,5 +36,7 @@ public class Note {
         return note;
     }
 
-
+    public boolean isSlide() {
+        return "slide".equalsIgnoreCase(type);
+    }
 }

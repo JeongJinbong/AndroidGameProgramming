@@ -26,6 +26,11 @@ public class ExplodingNote extends AnimSprite implements IRecyclable {
         return ex.init(origin.getX(), origin.getY());
     }
 
+    public static ExplodingNote get(Call.Type type, SlideNoteSprite origin) {
+        ExplodingNote ex = Scene.top().getRecyclable(ExplodingNote.class);
+        return ex.init(origin.getX(), origin.getY());
+    }
+
     private ExplodingNote init(float x, float y) {
         this.x = x;
         this.y = y;
