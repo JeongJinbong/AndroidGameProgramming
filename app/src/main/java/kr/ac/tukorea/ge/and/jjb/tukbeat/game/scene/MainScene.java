@@ -139,14 +139,17 @@ public class MainScene extends Scene {
                 charmingCount++;
                 combo++;
                 scoreRate = 1.0f;
+                call.setCombo(combo);
                 break;
             case normal:
                 normalCount++;
                 combo++;
                 scoreRate = 0.5f;
+                call.setCombo(combo);
                 break;
             case miss:
                 combo = 0;
+                call.setCombo(combo);
                 break;
         }
 
@@ -158,7 +161,6 @@ public class MainScene extends Scene {
         }
 
         call.set(type);
-        call.setCombo(combo);
 
         remove(Layer.note, ns);
         ExplodingNote ex = ExplodingNote.get(type, ns);
@@ -190,5 +192,12 @@ public class MainScene extends Scene {
         }
 
         return nearest;
+    }
+
+    public void removeNote(NoteSprite noteSprite){
+        call.set(Call.Type.miss);
+        combo = 0;
+        call.setCombo(0);
+        remove(Layer.note, noteSprite);
     }
 }

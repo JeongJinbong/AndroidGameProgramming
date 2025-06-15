@@ -47,7 +47,7 @@ public class NoteSprite extends Sprite implements IRecyclable {
         float timeDiff = note.time / 1000.0f - musicTime;
         float y = LINE_Y - timeDiff * SPEED;
         if(y > Metrics.height+HEIGHT) {
-            MainScene.scene.remove(MainScene.Layer.note, this);
+            MainScene.scene.removeNote(this);
             return;
         }
 

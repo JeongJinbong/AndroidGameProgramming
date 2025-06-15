@@ -32,6 +32,7 @@ public class Call extends Sprite {
     private final float digitScale = 2.0f;
     private int currentCombo = 0;
 
+    private Type currentType = Type.none;
 
 
     public static Type typeWithTimeDiff(float diff) {
@@ -55,18 +56,32 @@ public class Call extends Sprite {
     }
 
     public void set(Type type) {
-        if (type == Type.charming) {
-            show = true;
-            if (!getAnimator().isRunning()) {
-                getAnimator().start();
-            }
-        } else {
-            show = false;
-            if (animator != null && animator.isRunning()) {
-                animator.cancel();
-            }
+        if (this.currentType == type) return;
+
+        this.currentType = type;
+
+        switch (type) {
+            case charming:
+                show = true;
+                if (!getAnimator().isRunning()) {
+                    getAnimator().start();
+                }
+                break;
+
+            case normal:
+                show = false;
+                break;
+
+            case miss:
+            case none:
+                show = false;
+                if (animator != null && animator.isRunning()) {
+                    animator.cancel(); // animation 끝내고 텍스트 숨김
+                }
+                break;
         }
     }
+
 
     private ValueAnimator getAnimator() {
         if (animator != null) return animator;

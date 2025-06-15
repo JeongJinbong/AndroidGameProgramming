@@ -18,13 +18,6 @@
   "type": "TAP",
   "time": 6000,
   "startX":700
-},
-  {
-    "type": "SLIDE",
-    "time": 7000,
-    "endTime": 8000,
-    "startX": 300,
-    "pathX": [300, 350, 400, 450, 500]
-  }
+}
 
 ]

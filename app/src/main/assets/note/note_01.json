@@ -18,8 +18,8 @@
   },
   {
     "type": "SLIDE",
-    "time": 10.0,
-    "endTime": 13.0,
+    "time": 7000,
+    "endTime": 8000,
     "startX": 300,
     "pathX": [300, 350, 400, 450, 500]
   }
