@@ -35,16 +35,20 @@ public class Song {
         return "Song:<" + title + "/" + artist + "/" + thumbnail + "/" + media + "/" + note + ">";
     }
 
+    private void prepareMediaPlayer(Context context)throws IOException{
+        AssetFileDescriptor afd = context.getAssets().openFd(media);
+        Song.mediaPlayer.reset();
+        FileDescriptor fd = afd.getFileDescriptor();
+        mediaPlayer.setDataSource(fd, afd.getStartOffset(), afd.getLength());
+        afd.close();
+        Song.mediaPlayer.prepare();
+    }
+
     public void play(Context context)
     {
         stop();
         try{
-            AssetFileDescriptor afd = context.getAssets().openFd(media);
-            Song.mediaPlayer.reset();
-            FileDescriptor fd = afd.getFileDescriptor();
-            mediaPlayer.setDataSource(fd, afd.getStartOffset(), afd.getLength());
-            afd.close();
-            Song.mediaPlayer.prepare();
+            prepareMediaPlayer(context);
             Song.mediaPlayer.start();
             Log.d(TAG, "Play:" + this);
         }catch (IOException | IllegalStateException e) {
@@ -55,12 +59,7 @@ public class Song {
     public void playDemo(Context context) {
         stop();
         try {
-            AssetFileDescriptor afd = context.getAssets().openFd(media);
-            Song.mediaPlayer.reset();
-            FileDescriptor fd = afd.getFileDescriptor();
-            mediaPlayer.setDataSource(fd, afd.getStartOffset(), afd.getLength());
-            afd.close();
-            Song.mediaPlayer.prepare();
+            prepareMediaPlayer(context);
             Song.mediaPlayer.seekTo(demoStart);
             Song.mediaPlayer.start();
 
