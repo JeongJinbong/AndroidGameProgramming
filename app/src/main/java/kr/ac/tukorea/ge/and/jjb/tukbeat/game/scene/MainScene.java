@@ -19,6 +19,8 @@ public class MainScene extends Scene {
     public static MainScene scene;
     float w = Metrics.width, h = Metrics.height;
 
+    private final Song song;
+
     public enum Layer {
         bg, note;
         public static final int COUNT = values().length;
@@ -27,6 +29,7 @@ public class MainScene extends Scene {
     public MainScene(Song song) {
         initLayers(Layer.COUNT);
 
+        this.song = song;
         Context context = GameView.view.getContext();
         add(Layer.bg, new Sprite(R.mipmap.bg, w / 2, h / 2, w, h));
         add(Layer.bg, new Sprite(R.mipmap.judgeline, w / 2, h - (50f / 2f) - 150f, w, 50f));
@@ -36,12 +39,14 @@ public class MainScene extends Scene {
     @Override
     public void onEnter() {
         super.onEnter();
+        Context context =GameView.view.getContext();
+        song.play(context);
     }
 
     @Override
     public void onExit() {
+        song.stop();
         super.onExit();
-        scene = null;
     }
 
     @Override
@@ -53,8 +58,6 @@ public class MainScene extends Scene {
     public void onResume() {
         super.onResume();
     }
-
-
 
     @Override
     public void update() {

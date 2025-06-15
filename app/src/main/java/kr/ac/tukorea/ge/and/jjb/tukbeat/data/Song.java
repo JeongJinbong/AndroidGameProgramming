@@ -35,6 +35,23 @@ public class Song {
         return "Song:<" + title + "/" + artist + "/" + thumbnail + "/" + media + "/" + note + ">";
     }
 
+    public void play(Context context)
+    {
+        stop();
+        try{
+            AssetFileDescriptor afd = context.getAssets().openFd(media);
+            Song.mediaPlayer.reset();
+            FileDescriptor fd = afd.getFileDescriptor();
+            mediaPlayer.setDataSource(fd, afd.getStartOffset(), afd.getLength());
+            afd.close();
+            Song.mediaPlayer.prepare();
+            Song.mediaPlayer.start();
+            Log.d(TAG, "Play:" + this);
+        }catch (IOException | IllegalStateException e) {
+            Log.w(TAG, "MediaPlayer play failed", e);
+        }
+    }
+
     public void playDemo(Context context) {
         stop();
         try {
