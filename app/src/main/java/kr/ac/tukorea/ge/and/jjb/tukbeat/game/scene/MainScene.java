@@ -26,8 +26,6 @@ public class MainScene extends Scene {
         public static final int COUNT = values().length;
     }
 
-
-
     public MainScene(Song song) {
         initLayers(Layer.COUNT);
 
@@ -48,8 +46,9 @@ public class MainScene extends Scene {
         musicTime += GameView.frameTime;
         super.update();
 
+        float timeOffset = NoteSprite.screenfulTime();
         while(true){
-            Note note = song.popNoteBefore(musicTime);
+            Note note = song.popNoteBefore(musicTime+timeOffset);
             if(note == null) break;
             add(Layer.note,NoteSprite.get(note));
         }
@@ -81,5 +80,7 @@ public class MainScene extends Scene {
         song.resume();
         super.onResume();
     }
+
+
 
 }

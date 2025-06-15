@@ -154,7 +154,7 @@ public class Song {
     public Note popNoteBefore(float musicTime){
         if(noteIndex >= notes.size()) return null;
         Note note = notes.get(noteIndex);
-        if(note.time > musicTime) return null;
+        if(note.time / 1000 > musicTime) return null;
         Log.d(TAG, "Popping nodeIndex=" + noteIndex);
         noteIndex++;
         return note;
