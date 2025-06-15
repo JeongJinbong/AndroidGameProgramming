@@ -34,6 +34,7 @@ public class MainScene extends Scene {
         add(Layer.bg, new Sprite(R.mipmap.bg, w / 2, h / 2, w, h));
         add(Layer.bg, new Sprite(R.mipmap.judgeline, w / 2, h - (50f / 2f) - 150f, w, 50f));
 
+        song.loadNotes(context);
     }
 
     @Override

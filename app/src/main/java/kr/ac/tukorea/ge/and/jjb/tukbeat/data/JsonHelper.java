@@ -25,6 +25,10 @@ public class JsonHelper {
                 boolean value = reader.nextBoolean();
                 Log.v(TAG, "boolean " + name + ": " + value + " - " + object);
                 field.set(object, value);
+            }else if (type == float.class) {
+                    float value = (float) reader.nextDouble();
+                    Log.v(TAG, "float " + name + ": " + value + " - " + object);
+                    field.setFloat(object, value);
             } else if (type == double.class) {
                 double value = reader.nextDouble();
                 Log.v(TAG, "double " + name + ": " + value + " - " + object);

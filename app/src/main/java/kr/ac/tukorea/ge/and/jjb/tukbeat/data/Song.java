@@ -2,16 +2,21 @@ package kr.ac.tukorea.ge.and.jjb.tukbeat.data;
 
 import android.content.Context;
 import android.content.res.AssetFileDescriptor;
+import android.content.res.AssetManager;
 import android.media.MediaPlayer;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.JsonReader;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
 
 import java.io.FileDescriptor;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Locale;
 
 public class Song {
 
@@ -27,6 +32,8 @@ public class Song {
     public static ArrayList<Song> songs;
     protected static Handler handler = new Handler(Looper.getMainLooper());
     public static int currentSongIndex = 0;
+    private ArrayList<Note> notes;
+    private float noteLength;
 
 
     @NonNull
@@ -109,6 +116,37 @@ public class Song {
 
     public static Song get(int index) {
         return songs.get(index);
+    }
+
+    public ArrayList<Note> loadNotes(Context context) {
+        if (notes != null && !notes.isEmpty()) return notes;
+
+        notes = new ArrayList<>();
+        String filename = String.format(Locale.ENGLISH, "notes/note_%02d.json", currentSongIndex);
+        float length = 0;
+
+        try {
+            AssetManager assetManager = context.getAssets();
+            InputStream is = assetManager.open(filename);
+            JsonReader jr = new JsonReader(new InputStreamReader(is));
+            jr.beginArray();
+            while (jr.hasNext()) {
+                Note note = Note.parse(jr);
+                if (note != null) {
+                    Log.d(TAG, "Loaded Note: " + note);
+                    notes.add(note);
+                    if (length < note.time) {
+                        length = note.time;
+                    }
+                }
+            }
+            jr.endArray();
+            jr.close();
+            this.noteLength = length;
+        } catch (IOException e) {
+            Log.e(TAG, "Failed to load notes", e);
+        }
+        return notes;
     }
 
 }
