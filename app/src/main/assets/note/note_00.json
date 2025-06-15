@@ -1,36 +1,7 @@
 [
   {
     "type": "TAP",
-    "time": 3.2,
-    "startX":200
-  },
-  {
-  "type": "TAP",
-  "time": 3.2,
-  "startX": 400
-},
-
-  {
-    "type": "TAP",
-    "time": 5.2,
-    "startX":400
-  },
-  {
-    "type": "TAP",
-    "time": 5.2,
-    "startX": 600
-  },
-  {
-    "type": "HOLD",
-    "time": 6.2,
-    "endTime": 9.2,
-    "startX": 200
-  },
-  {
-    "type": "SLIDE",
-    "time": 10.0,
-    "endTime": 13.0,
-    "startX": 300,
-    "pathX": [300, 350, 400, 450, 500]
+    "time": 5000,
+    "startX":700
   }
 ]

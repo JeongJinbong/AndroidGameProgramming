@@ -7,35 +7,28 @@ import kr.ac.tukorea.ge.and.jjb.tukbeat.data.Note;
 import kr.ac.tukorea.ge.spgp2025.a2dg.framework.objects.Sprite;
 import kr.ac.tukorea.ge.spgp2025.a2dg.framework.interfaces.IRecyclable;
 import kr.ac.tukorea.ge.spgp2025.a2dg.framework.scene.Scene;
-import kr.ac.tukorea.ge.spgp2025.a2dg.framework.view.Metrics;
 
 public class NoteSprite extends Sprite implements IRecyclable {
     protected Note note;
     protected static final float WIDTH = 200f;
     protected static final float HEIGHT = 100f;
     protected static final float SPEED = 450.0f;
-    protected static final float LINE_Y = Metrics.height-(50f/2f)-150f;
-
-    public static NoteSprite get(Note note) {
-        NoteSprite ns = Scene.top().getRecyclable(NoteSprite.class);
-        if (ns == null)
-            ns = new NoteSprite();
-        ns.init(note);
-        return ns;
-    }
+    protected static final float LINE_Y = 725.0f;
 
     public NoteSprite() {
         super(R.mipmap.black_note);
+        setPosition(0,0,WIDTH,HEIGHT);
+    }
+    public static NoteSprite get(Note note) {
+        return Scene.top().getRecyclable(NoteSprite.class).init(note);
     }
 
-    public static float screenfulTime() {
-        float distance = LINE_Y +HEIGHT / 2f;
-        return distance  / SPEED;
-    }
-
-    private void init(Note note) {
+    private NoteSprite init(Note note) {
         this.note = note;
-        update();
+        float x = note.startX;
+        float y= note.time/10.0f;
+        setPosition(x,y);
+        return this;
     }
 
     @Override

@@ -8,7 +8,7 @@ import java.util.ArrayList;
 
 import kr.ac.tukorea.ge.and.jjb.tukbeat.R;
 import kr.ac.tukorea.ge.and.jjb.tukbeat.data.Song;
-import kr.ac.tukorea.ge.spgp2025.a2dg.framework.interfaces.IGameObject;
+import kr.ac.tukorea.ge.and.jjb.tukbeat.data.Note;
 import kr.ac.tukorea.ge.spgp2025.a2dg.framework.scene.Scene;
 import kr.ac.tukorea.ge.spgp2025.a2dg.framework.objects.Sprite;
 import kr.ac.tukorea.ge.spgp2025.a2dg.framework.view.GameView;
@@ -42,6 +42,11 @@ public class MainScene extends Scene {
         super.onEnter();
         Context context =GameView.view.getContext();
         song.play(context);
+
+        for(Note note: song.notes){
+            add(Layer.note, NoteSprite.get(note));
+        }
+
     }
 
     @Override

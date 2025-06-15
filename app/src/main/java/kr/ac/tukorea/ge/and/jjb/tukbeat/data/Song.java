@@ -32,7 +32,7 @@ public class Song {
     public static ArrayList<Song> songs;
     protected static Handler handler = new Handler(Looper.getMainLooper());
     public static int currentSongIndex = 0;
-    private ArrayList<Note> notes;
+    public ArrayList<Note> notes;
     private float noteLength;
 
 
@@ -122,7 +122,7 @@ public class Song {
         if (notes != null && !notes.isEmpty()) return notes;
 
         notes = new ArrayList<>();
-        String filename = String.format(Locale.ENGLISH, "notes/note_%02d.json", currentSongIndex);
+        String filename = String.format(Locale.ENGLISH, "note/note_%02d.json", currentSongIndex);
         float length = 0;
 
         try {
