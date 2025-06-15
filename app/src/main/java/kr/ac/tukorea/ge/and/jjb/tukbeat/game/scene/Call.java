@@ -20,26 +20,24 @@ import kr.ac.tukorea.ge.spgp2025.a2dg.framework.view.Metrics;
 public class Call extends Sprite {
 
     public enum Type {
-        Charming, great, good, bad, miss, none;
+        charming, normal, miss, none
     }
 
     private boolean show = false;
     private ValueAnimator animator;
-    private int combo = 0;
-
     private final Bitmap numberBitmap;
     private final Rect srcRect = new Rect();
     private final RectF dstRectDigit = new RectF();
     private final int digitWidth = 24, digitHeight = 32;
-    private final float digitScale = 2.0f; 
+    private final float digitScale = 2.0f;
+    private int currentCombo = 0;
 
 
-    public static Type typeWithTimeDiff(float time) {
-        time = Math.abs(time);
-        if (time < 0.1f) return Type.Charming;
-        if (time < 0.2f) return Type.great;
-        if (time < 0.3f) return Type.good;
-        if (time < 0.4f) return Type.bad;
+
+    public static Type typeWithTimeDiff(float diff) {
+        float abs = Math.abs(diff);
+        if (abs <= 0.04f) return Type.charming;
+        if (abs <= 0.10f) return Type.normal;
         return Type.miss;
     }
 
@@ -57,14 +55,16 @@ public class Call extends Sprite {
     }
 
     public void set(Type type) {
-        if (type == Type.Charming || type == Type.great || type == Type.good) {
-            combo++;
+        if (type == Type.charming) {
             show = true;
             if (!getAnimator().isRunning()) {
                 getAnimator().start();
             }
-        } else if (type == Type.bad || type == Type.miss) {
-            combo = 0;
+        } else {
+            show = false;
+            if (animator != null && animator.isRunning()) {
+                animator.cancel();
+            }
         }
     }
 
@@ -88,6 +88,10 @@ public class Call extends Sprite {
             public void onAnimationEnd(Animator animation) {
                 set(Type.none);
             }
+            @Override
+            public void onAnimationCancel(Animator animation) {
+                set(Type.none);
+            }
         });
 
         return animator;
@@ -95,16 +99,17 @@ public class Call extends Sprite {
 
     @Override
     public void draw(Canvas canvas) {
-        if (!show) return;
-        super.draw(canvas);
+        if (show) {
+            super.draw(canvas);
+        }
 
-        if (combo >= 2) {
+        if (currentCombo >= 2) {
             drawComboDigits(canvas);
         }
     }
 
     private void drawComboDigits(Canvas canvas) {
-        String comboStr = String.valueOf(combo);
+        String comboStr = String.valueOf(currentCombo);
         float digitW = digitWidth * digitScale;
         float digitH = digitHeight * digitScale;
         float totalWidth = comboStr.length() * digitW;
@@ -119,6 +124,10 @@ public class Call extends Sprite {
             canvas.drawBitmap(numberBitmap, srcRect, dstRectDigit, null);
             startX += digitW;
         }
+    }
+
+    public void setCombo(int combo) {
+        this.currentCombo = combo;
     }
 }
 

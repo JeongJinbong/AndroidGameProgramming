@@ -159,6 +159,8 @@ public class Song {
         return note;
     }
 
-
+    public int getTotalNoteCount() {
+        return notes != null ? notes.size() : 0;
+    }
 
 }

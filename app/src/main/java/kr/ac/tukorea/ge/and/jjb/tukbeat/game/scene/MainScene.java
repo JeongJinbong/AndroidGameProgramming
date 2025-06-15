@@ -1,10 +1,7 @@
 package kr.ac.tukorea.ge.and.jjb.tukbeat.game.scene;
 
 import android.content.Context;
-import android.os.Handler;
 import android.view.MotionEvent;
-
-import java.util.ArrayList;
 
 import kr.ac.tukorea.ge.and.jjb.tukbeat.R;
 import kr.ac.tukorea.ge.and.jjb.tukbeat.data.Song;
@@ -14,6 +11,7 @@ import kr.ac.tukorea.ge.spgp2025.a2dg.framework.scene.Scene;
 import kr.ac.tukorea.ge.spgp2025.a2dg.framework.objects.Sprite;
 import kr.ac.tukorea.ge.spgp2025.a2dg.framework.view.GameView;
 import kr.ac.tukorea.ge.spgp2025.a2dg.framework.view.Metrics;
+import kr.ac.tukorea.ge.spgp2025.a2dg.framework.objects.Score;
 
 public class MainScene extends Scene {
 
@@ -21,7 +19,13 @@ public class MainScene extends Scene {
     private final Song song;
     private float musicTime;
     float w = Metrics.width, h = Metrics.height;
-    protected  Call call;
+    protected Call call;
+
+    private Score scoreDisplay;
+    private int charmingCount = 0;
+    private int normalCount = 0;
+    private int combo = 0;
+    private final int totalNotes;
 
     public enum Layer {
         bg, note, explosion, ui, call;
@@ -37,12 +41,29 @@ public class MainScene extends Scene {
         add(Layer.bg, new Sprite(R.mipmap.judgeline, w / 2, h - (50f / 2f) - 150f, w, 50f));
 
         song.loadNotes(context);
+        this.totalNotes = song.getTotalNoteCount();
+
         add(Layer.call, call = new Call());
 
+        scoreDisplay = new Score(R.mipmap.number_24x32, 150f, 20f, 30f);
+        scoreDisplay.setScore(0f);
+        add(Layer.ui, scoreDisplay);
     }
 
-    public float getMusicTime(){
+    public float getMusicTime() {
         return musicTime;
+    }
+
+    public int getCombo() {
+        return combo;
+    }
+
+    public int getCharmingCount() {
+        return charmingCount;
+    }
+
+    public int getNormalCount() {
+        return normalCount;
     }
 
     @Override
@@ -51,11 +72,10 @@ public class MainScene extends Scene {
         super.update();
         float timeOffset = NoteSprite.screenfulTime();
 
-
-        while(true){
-            Note note = song.popNoteBefore(musicTime+timeOffset);
-            if(note == null) break;
-            add(Layer.note,NoteSprite.get(note));
+        while (true) {
+            Note note = song.popNoteBefore(musicTime + timeOffset);
+            if (note == null) break;
+            add(Layer.note, NoteSprite.get(note));
         }
     }
 
@@ -63,7 +83,7 @@ public class MainScene extends Scene {
     public void onEnter() {
         super.onEnter();
         scene = this;
-        Context context =GameView.view.getContext();
+        Context context = GameView.view.getContext();
         song.play(context);
     }
 
@@ -71,6 +91,9 @@ public class MainScene extends Scene {
     public void onExit() {
         song.stop();
         scene = null;
+        combo = 0;
+        charmingCount = 0;
+        normalCount = 0;
         super.onExit();
     }
 
@@ -87,24 +110,18 @@ public class MainScene extends Scene {
     }
 
     @Override
-    public boolean onTouchEvent(MotionEvent event){
+    public boolean onTouchEvent(MotionEvent event) {
         int action = event.getActionMasked();
         int pointerCount = event.getPointerCount();
-        int actionIndex = event.getActionIndex();
 
         if (action == MotionEvent.ACTION_DOWN || action == MotionEvent.ACTION_POINTER_DOWN) {
             for (int i = 0; i < pointerCount; i++) {
-                if (i == actionIndex &&
-                        (action == MotionEvent.ACTION_UP || action == MotionEvent.ACTION_POINTER_UP)) {
-                    continue;
-                }
                 float tx = event.getX(i);
                 float ty = event.getY(i);
                 float[] pt = Metrics.fromScreen(tx, ty);
-                judgeNoteAt(pt[0], pt[1]);  // 터치 좌표 기준 판정
+                judgeNoteAt(pt[0], pt[1]);
             }
         }
-
         return true;
     }
 
@@ -114,11 +131,38 @@ public class MainScene extends Scene {
 
         float diff = ns.note.time / 1000f - musicTime;
         Call.Type type = Call.typeWithTimeDiff(diff);
-        call.set(type);
 
+        float scoreRate = 0.f;
+
+        switch (type) {
+            case charming:
+                charmingCount++;
+                combo++;
+                scoreRate = 1.0f;
+                break;
+            case normal:
+                normalCount++;
+                combo++;
+                scoreRate = 0.5f;
+                break;
+            case miss:
+                combo = 0;
+                break;
+        }
+
+        if (scoreRate > 0f) {
+            float weightedHit = charmingCount + normalCount * 0.5f;
+            float total = totalNotes;
+            float scorePercent = (20 * weightedHit * (weightedHit - 1)) / (total * (total - 1)) + (80 * weightedHit) / total;
+            scoreDisplay.updateScore(scorePercent);
+        }
+
+        call.set(type);
+        call.setCombo(combo);
+
+        remove(Layer.note, ns);
         ExplodingNote ex = ExplodingNote.get(type, ns);
         add(Layer.explosion, ex);
-        remove(Layer.note, ns);
     }
 
     private NoteSprite findNearestNote(float tx, float ty) {
