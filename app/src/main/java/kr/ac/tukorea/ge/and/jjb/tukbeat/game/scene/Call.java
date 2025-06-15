@@ -36,8 +36,8 @@ public class Call extends Sprite {
 
     public static Type typeWithTimeDiff(float diff) {
         float abs = Math.abs(diff);
-        if (abs <= 0.04f) return Type.charming;
-        if (abs <= 0.10f) return Type.normal;
+        if (abs <= 0.08f) return Type.charming;
+        if (abs <= 0.125f) return Type.normal;
         return Type.miss;
     }
 
