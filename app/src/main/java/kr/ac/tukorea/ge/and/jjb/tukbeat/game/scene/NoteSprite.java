@@ -29,17 +29,25 @@ public class NoteSprite extends Sprite implements IRecyclable {
         float x = note.startX;
         float y= -note.time;
         setPosition(x,y);
+        //Log.d("NoteSprite", "init(), msec=" + note.msec+ " x= " + x+ " y= " +y);
         return this;
     }
+
+    public boolean logs;
 
     @Override
     public void onRecycle() {
         note = null;
     }
+
     @Override
     public void update() {
-        y+= SPEED * GameView.frameTime;
+        float musicTime = MainScene.scene.getMusicTime();
+        float timeDiff = note.time / 1000.0f - musicTime;
+        float y = LINE_Y - timeDiff * SPEED;
         setPosition(x,y);
+        if(logs)
+            Log.d("NoteSprite", "x=" + x + "y=" + y + " t=" + musicTime + "scene=" + MainScene.scene);
     }
 
     public float getX() {

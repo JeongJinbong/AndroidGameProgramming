@@ -17,14 +17,16 @@ import kr.ac.tukorea.ge.spgp2025.a2dg.framework.view.Metrics;
 public class MainScene extends Scene {
 
     public static MainScene scene;
-    float w = Metrics.width, h = Metrics.height;
-
     private final Song song;
+    private float musicTime;
+    float w = Metrics.width, h = Metrics.height;
 
     public enum Layer {
         bg, note;
         public static final int COUNT = values().length;
     }
+
+
 
     public MainScene(Song song) {
         initLayers(Layer.COUNT);
@@ -37,9 +39,20 @@ public class MainScene extends Scene {
         song.loadNotes(context);
     }
 
+    public float getMusicTime(){
+        return musicTime;
+    }
+
+    @Override
+    public void update() {
+        musicTime += GameView.frameTime;
+        super.update();
+    }
+
     @Override
     public void onEnter() {
         super.onEnter();
+        scene = this;
         Context context =GameView.view.getContext();
         song.play(context);
 
@@ -47,11 +60,14 @@ public class MainScene extends Scene {
             add(Layer.note, NoteSprite.get(note));
         }
 
+        NoteSprite first = (NoteSprite) objectsAt(Layer.note).get(0);
+        first.logs = true;
     }
 
     @Override
     public void onExit() {
         song.stop();
+        scene = null;
         super.onExit();
     }
 
@@ -67,8 +83,4 @@ public class MainScene extends Scene {
         super.onResume();
     }
 
-    @Override
-    public void update() {
-        super.update();
-        }
 }
