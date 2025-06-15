@@ -43,24 +43,24 @@ public class LongNoteSprite extends Sprite implements IRecyclable {
 
     @Override
     public void update() {
-        float musicTime = MainScene.scene.getMusicTime();
+        //float musicTime = MainScene.scene.getMusicTime();
 
-        float startDiff = note.time - musicTime;
-        float endDiff = note.endTime - musicTime;
+      //  float startDiff = note.time - musicTime;
+      //  float endDiff = note.endTime - musicTime;
 
-        float y1 = LINE_Y - startDiff * SPEED;
-        float y2 = LINE_Y - endDiff * SPEED;
+        //float y1 = LINE_Y - startDiff * SPEED;
+     //   float y2 = LINE_Y - endDiff * SPEED;
 
-        float topY = Math.min(y1, y2);
-        float bottomY = Math.max(y1, y2);
-        float height = bottomY - topY;
+   //     float topY = Math.min(y1, y2);
+    //    float bottomY = Math.max(y1, y2);
+    //    float height = bottomY - topY;
 
-        if (topY > Metrics.height + height) {
-            MainScene.scene.remove(MainScene.Layer.note, this);
+    //    if (topY > Metrics.height + height) {
+       //     MainScene.scene.remove(MainScene.Layer.note, this);
             return;
-        }
+       // }
 
-        float centerY = topY + height / 2f;
-        setPosition(note.startX, centerY, WIDTH, height);
+    //    float centerY = topY + height / 2f;
+    //    setPosition(note.startX, centerY, WIDTH, height);
     }
 }
