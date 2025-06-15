@@ -3,5 +3,21 @@
     "type": "TAP",
     "time": 4000,
     "startX":700
-  }
+  },
+  {
+    "type": "TAP",
+    "time": 4500,
+    "startX":700
+  },
+  {
+  "type": "TAP",
+  "time": 5000,
+  "startX":700
+},
+  {
+  "type": "TAP",
+  "time": 6000,
+  "startX":700
+}
+
 ]
