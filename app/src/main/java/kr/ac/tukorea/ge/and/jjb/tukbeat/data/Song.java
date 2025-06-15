@@ -34,6 +34,7 @@ public class Song {
     public static int currentSongIndex = 0;
     public ArrayList<Note> notes;
     private float noteLength;
+    protected  int noteIndex; // 어느 노트까지 만들었는지 기억
 
 
     @NonNull
@@ -122,6 +123,7 @@ public class Song {
         if (notes != null && !notes.isEmpty()) return notes;
 
         notes = new ArrayList<>();
+        noteIndex = 0;
         String filename = String.format(Locale.ENGLISH, "note/note_%02d.json", currentSongIndex);
         float length = 0;
 
@@ -147,6 +149,15 @@ public class Song {
             Log.e(TAG, "Failed to load notes", e);
         }
         return notes;
+    }
+
+    public Note popNoteBefore(float musicTime){
+        if(noteIndex >= notes.size()) return null;
+        Note note = notes.get(noteIndex);
+        if(note.time > musicTime) return null;
+        Log.d(TAG, "Popping nodeIndex=" + noteIndex);
+        noteIndex++;
+        return note;
     }
 
 }

@@ -47,6 +47,12 @@ public class MainScene extends Scene {
     public void update() {
         musicTime += GameView.frameTime;
         super.update();
+
+        while(true){
+            Note note = song.popNoteBefore(musicTime);
+            if(note == null) break;
+            add(Layer.note,NoteSprite.get(note));
+        }
     }
 
     @Override
@@ -55,13 +61,6 @@ public class MainScene extends Scene {
         scene = this;
         Context context =GameView.view.getContext();
         song.play(context);
-
-        for(Note note: song.notes){
-            add(Layer.note, NoteSprite.get(note));
-        }
-
-        NoteSprite first = (NoteSprite) objectsAt(Layer.note).get(0);
-        first.logs = true;
     }
 
     @Override
