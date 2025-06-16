@@ -7,15 +7,16 @@ import kr.ac.tukorea.ge.and.jjb.tukbeat.data.Note;
 import kr.ac.tukorea.ge.spgp2025.a2dg.framework.objects.Sprite;
 import kr.ac.tukorea.ge.spgp2025.a2dg.framework.interfaces.IRecyclable;
 import kr.ac.tukorea.ge.spgp2025.a2dg.framework.scene.Scene;
-import kr.ac.tukorea.ge.spgp2025.a2dg.framework.view.GameView;
 import kr.ac.tukorea.ge.spgp2025.a2dg.framework.view.Metrics;
 
 public class NoteSprite extends Sprite implements IRecyclable {
     protected Note note;
     protected static final float WIDTH = 200f;
     protected static final float HEIGHT = 100f;
-    protected static final float SPEED = 400.0f;
+    protected static final float SPEED = 600.0f;
     protected static final float LINE_Y = 725.0f;
+
+    private boolean judged = false;
 
     public NoteSprite() {
         super(R.mipmap.black_note);
@@ -35,11 +36,6 @@ public class NoteSprite extends Sprite implements IRecyclable {
     }
 
     public boolean logs;
-
-    @Override
-    public void onRecycle() {
-        note = null;
-    }
 
     @Override
     public void update() {
@@ -68,4 +64,19 @@ public class NoteSprite extends Sprite implements IRecyclable {
     public static float screenfulTime(){
         return Metrics.height / SPEED;
     }
+
+    public void markJudged() {
+        this.judged = true;
+    }
+
+    public boolean isJudged() {
+        return judged;
+    }
+
+    @Override
+    public void onRecycle() {
+        note = null;
+        judged = false;
+    }
+
 }

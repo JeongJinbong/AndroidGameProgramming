@@ -17,7 +17,6 @@ public class TUKBeatActivity extends GameActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        GameView.drawsDebugStuffs = BuildConfig.DEBUG;
         Metrics.setGameSize(1600,900);
         int songIndex = Song.currentSongIndex;
         super.onCreate(savedInstanceState);

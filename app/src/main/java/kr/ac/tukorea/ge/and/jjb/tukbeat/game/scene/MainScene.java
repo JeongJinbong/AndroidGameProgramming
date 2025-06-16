@@ -3,33 +3,30 @@ package kr.ac.tukorea.ge.and.jjb.tukbeat.game.scene;
 import android.content.Context;
 import android.view.MotionEvent;
 
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
+import java.util.*;
 
 import kr.ac.tukorea.ge.and.jjb.tukbeat.R;
-import kr.ac.tukorea.ge.and.jjb.tukbeat.data.Song;
 import kr.ac.tukorea.ge.and.jjb.tukbeat.data.Note;
+import kr.ac.tukorea.ge.and.jjb.tukbeat.data.Song;
 import kr.ac.tukorea.ge.spgp2025.a2dg.framework.interfaces.IGameObject;
-import kr.ac.tukorea.ge.spgp2025.a2dg.framework.scene.Scene;
+import kr.ac.tukorea.ge.spgp2025.a2dg.framework.objects.Score;
 import kr.ac.tukorea.ge.spgp2025.a2dg.framework.objects.Sprite;
+import kr.ac.tukorea.ge.spgp2025.a2dg.framework.scene.Scene;
 import kr.ac.tukorea.ge.spgp2025.a2dg.framework.view.GameView;
 import kr.ac.tukorea.ge.spgp2025.a2dg.framework.view.Metrics;
-import kr.ac.tukorea.ge.spgp2025.a2dg.framework.objects.Score;
 
 public class MainScene extends Scene {
     public static MainScene scene;
     private final Song song;
     private float musicTime;
     private final float w = Metrics.width, h = Metrics.height;
-    protected Call call;
+    private final Set<SlideNoteSprite> heldSlideNotes = new HashSet<>();
     private Score scoreDisplay;
     private int charmingCount = 0;
     private int normalCount = 0;
     private int combo = 0;
     private final int totalNotes;
-
-    private final Set<SlideNoteSprite> heldSlideNotes = new HashSet<>();
+    protected Call call;
     public static final float JUDGMENT_RANGE_Y = 100f;
 
     public enum Layer {
@@ -43,15 +40,15 @@ public class MainScene extends Scene {
 
         Context context = GameView.view.getContext();
         add(Layer.bg, new Sprite(R.mipmap.bg, w / 2, h / 2, w, h));
-        add(Layer.bg, new Sprite(R.mipmap.judgeline, w / 2, h - (50f / 2f) - 150f, w, 50f));
+        add(Layer.bg, new Sprite(R.mipmap.judgeline, w / 2, h - 25f - 150f, w, 50f));
 
         song.loadNotes(context);
         this.totalNotes = song.getTotalNoteCount();
 
         add(Layer.call, call = new Call());
 
-        scoreDisplay = new Score(R.mipmap.number_24x32, 150f, 20f, 30f);
-        scoreDisplay.setScore(0f);
+        scoreDisplay = new Score(R.mipmap.number_24x32, Metrics.width - 50f, 50f, 30f);
+        scoreDisplay.setScore(0);
         add(Layer.ui, scoreDisplay);
     }
 
@@ -83,7 +80,6 @@ public class MainScene extends Scene {
         Iterator<SlideNoteSprite> heldIt = heldSlideNotes.iterator();
         while (heldIt.hasNext()) {
             SlideNoteSprite sns = heldIt.next();
-
             if (sns.isJudged()) {
                 heldIt.remove();
                 continue;
@@ -94,25 +90,50 @@ public class MainScene extends Scene {
             Call.Type type = Call.typeWithTimeDiff(diff);
 
             if (Math.abs(y - NoteSprite.LINE_Y) <= JUDGMENT_RANGE_Y && type == Call.Type.charming) {
+                sns.markJudged();
                 charmingCount++;
                 combo++;
                 call.setCombo(combo);
                 updateScore();
                 call.set(Call.Type.charming);
-                sns.markJudged();
                 removeNote(sns);
                 add(Layer.explosion, ExplodingNote.get(Call.Type.charming, sns));
                 heldIt.remove();
-            } else if (y > NoteSprite.LINE_Y + JUDGMENT_RANGE_Y && !sns.isJudged()) {
+            } else if (y > NoteSprite.LINE_Y + JUDGMENT_RANGE_Y) {
+                sns.markJudged();
                 combo = 0;
                 call.setCombo(combo);
                 call.set(Call.Type.miss);
-                sns.markJudged();
                 removeNote(sns);
                 add(Layer.explosion, ExplodingNote.get(Call.Type.miss, sns));
                 heldIt.remove();
             }
         }
+
+        List<NoteSprite> toRemove = new ArrayList<>();
+        for (IGameObject go : objectsAt(Layer.note)) {
+            if (!(go instanceof NoteSprite)) continue;
+            NoteSprite ns = (NoteSprite) go;
+            if (ns.isJudged()) continue;
+
+            float y = ns.getY();
+            if (y > NoteSprite.LINE_Y + JUDGMENT_RANGE_Y) {
+                ns.markJudged();
+                combo = 0;
+                call.setCombo(combo);
+                call.set(Call.Type.miss);
+                toRemove.add(ns);
+                add(Layer.explosion, ExplodingNote.get(Call.Type.miss, ns));
+            }
+        }
+        for (NoteSprite ns : toRemove) {
+            removeNote(ns);
+        }
+    }
+
+    private void updateScore() {
+        int score = charmingCount * 100 + normalCount * 50;
+        scoreDisplay.setScore(score);
     }
 
     @Override
@@ -130,6 +151,7 @@ public class MainScene extends Scene {
         charmingCount = 0;
         normalCount = 0;
         heldSlideNotes.clear();
+        scoreDisplay.setScore(0);
         super.onExit();
     }
 
@@ -173,47 +195,38 @@ public class MainScene extends Scene {
                 if (sns.isJudged()) continue;
                 if (!isTouchingSlideNote(sns, tx, ty)) continue;
                 heldSlideNotes.add(sns);
+
             } else if (go instanceof NoteSprite) {
                 NoteSprite ns = (NoteSprite) go;
+                if (ns.isJudged()) continue;
 
                 float dx = Math.abs(ns.getX() - tx);
-                float noteToLineYDiff = Math.abs(ns.getY() - NoteSprite.LINE_Y);
-
-                if (dx > NoteSprite.WIDTH / 2 || noteToLineYDiff > JUDGMENT_RANGE_Y) {
-                    continue;
-                }
+                float dy = Math.abs(ns.getY() - NoteSprite.LINE_Y);
+                if (dx > NoteSprite.WIDTH / 2 || dy > JUDGMENT_RANGE_Y) continue;
 
                 float diff = ns.note.time / 1000f - musicTime;
                 Call.Type type = Call.typeWithTimeDiff(diff);
 
-                if (type == Call.Type.miss) {
-                    combo = 0;
-                    call.setCombo(combo);
-                    call.set(type);
-                } else {
-                    if (type == Call.Type.charming) {
-                        charmingCount++;
-                    } else {
-                        normalCount++;
-                    }
+                ns.markJudged();
+
+                if (type == Call.Type.charming) {
+                    charmingCount++;
                     combo++;
-                    call.setCombo(combo);
-                    updateScore();
-                    call.set(type);
+                } else if (type == Call.Type.normal) {
+                    normalCount++;
+                    combo++;
+                } else {
+                    combo = 0;
                 }
 
+                call.setCombo(combo);
+                updateScore();
+                call.set(type);
                 removeNote(ns);
                 add(Layer.explosion, ExplodingNote.get(type, ns));
                 return;
             }
         }
-    }
-
-    private void updateScore() {
-        float weightedHit = charmingCount + normalCount * 0.5f;
-        float total = totalNotes;
-        float scorePercent = (20 * weightedHit * (weightedHit - 1)) / (total * (total - 1)) + (80 * weightedHit) / total;
-        scoreDisplay.updateScore(scorePercent);
     }
 
     private boolean isTouchingSlideNote(SlideNoteSprite sns, float tx, float ty) {

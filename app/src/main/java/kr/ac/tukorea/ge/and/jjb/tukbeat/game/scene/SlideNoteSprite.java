@@ -15,7 +15,7 @@ public class SlideNoteSprite extends Sprite implements IRecyclable {
 
     private static final float WIDTH = 200f;
     private static final float HEIGHT = 100f;
-    private static final float SPEED = 400.0f;
+    private static final float SPEED = 600.0f;
     private static final float LINE_Y = 725.0f;
 
     public SlideNoteSprite() {
